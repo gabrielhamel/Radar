@@ -1,0 +1,8 @@
+[submodule "lib/csfml"]
+	path = lib/csfml
+	url = https://github.com/SFML/CSFML.git
+	branch = 2.5.1
+[submodule "lib/sfml"]
+	path = lib/sfml
+	url = https://github.com/SFML/SFML.git
+    branch = 2.5.1
