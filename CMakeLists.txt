@@ -17,6 +17,7 @@ endif()
 
 add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/main.c
+    ${PROJECT_SOURCE_DIR}/src/engine.c
 )
 
 set_target_properties(${BINARY_NAME}
