@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 3.24)
 project(radar C)
 
 set(CMAKE_C_STANDARD 23)
-
 set(BINARY_NAME radar)
 
-add_executable(${BINARY_NAME}
+if (${WIN32})
+    set(EXECUTABLE_TYPE WIN32)
+endif()
+
+add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/main.c
 )
 
@@ -20,7 +23,7 @@ set(CSFML_MODULES
     window
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if (${WIN32})
     if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
         set(LINK_EXTENSION "-d")
     endif()
@@ -56,6 +59,9 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         PRIVATE
         ${CSFML_DIR}/${CMAKE_BUILD_TYPE_LOWER}/lib/${CMAKE_BUILD_TYPE}
     )
+    target_link_libraries(${BINARY_NAME}
+        csfml-main${LINK_EXTENSION}
+    )
 
     # Copy needed dll files
     set(CSFML_SHARED_LIBS_DIR ${CSFML_DIR}/${CMAKE_BUILD_TYPE_LOWER}/lib/${CMAKE_BUILD_TYPE})
@@ -67,21 +73,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
             ARGS -E copy ${CSFML_SHARED_LIBS_DIR}/csfml-${MODULE}${LINK_EXTENSION}-2.dll ${CMAKE_BINARY_DIR}/bin
         )
     endforeach(MODULE)
-    set(OTHER_DLL_FILES
-        #${VCPKG_BIN}/freetype.dll
-        #${VCPKG_BIN}/bz2.dll
-        #${VCPKG_BIN}/brotlidec.dll
-        #${VCPKG_BIN}/brotlicommon.dll
-        #${VCPKG_BIN}/libpng16.dll
-    )
-    foreach(OTHER_DLL_FILE ${OTHER_DLL_FILES})
-        add_custom_command(
-            TARGET ${BINARY_NAME}
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND}
-            ARGS -E copy ${OTHER_DLL_FILE} ${CMAKE_BINARY_DIR}/bin
-        )
-    endforeach(OTHER_DLL_FILE)
 endif()
 
 target_include_directories(${BINARY_NAME} PRIVATE include)
