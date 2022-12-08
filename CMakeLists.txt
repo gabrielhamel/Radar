@@ -4,6 +4,13 @@ project(radar C)
 set(CMAKE_C_STANDARD 23)
 set(BINARY_NAME radar)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # Maybe work on MacM1 only
+    # TODO Intel Mac
+    include_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/2.5.1/include)
+    link_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/2.5.1/lib)
+endif()
+
 if (${WIN32})
     set(EXECUTABLE_TYPE WIN32)
 endif()
