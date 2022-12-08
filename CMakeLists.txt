@@ -3,8 +3,6 @@ project(radar C)
 
 set(CMAKE_C_STANDARD 23)
 
-set(VCPKG_DIR C:/vcpkg)
-
 set(BINARY_NAME radar)
 
 add_executable(${BINARY_NAME}
@@ -32,11 +30,23 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     # Build SFML and CSFML
     set(SFML_DIR ${PROJECT_SOURCE_DIR}/lib/sfml)
     set(CSFML_DIR ${PROJECT_SOURCE_DIR}/lib/csfml)
+
+    set(SFML_BUILD_VARIABLES
+        -DBUILD_SHARED_LIBS=1
+    )
+
+    set(CSFML_BUILD_VARIABLES
+        -DSTATIC_STD_LIBS=1
+        -DBUILD_SHARED_LIBS=1
+        -DCSFML_LINK_SFML_STATICALLY=0
+        -DSFML_DIR=${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER}
+    )
+
     add_custom_command(TARGET ${BINARY_NAME} PRE_LINK
         COMMAND
-            ${CMAKE_COMMAND} -B ${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -S ${SFML_DIR} -DSFML_USE_SYSTEM_DEPS=1 -DBUILD_SHARED_LIBS=0 -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake &&
+            ${CMAKE_COMMAND} ${SFML_BUILD_VARIABLES} -B ${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -S ${SFML_DIR} &&
             ${CMAKE_COMMAND} --build ${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} --config ${CMAKE_BUILD_TYPE} &&
-            ${CMAKE_COMMAND} -DSFML_DIR=${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -B ${CSFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -S ${CSFML_DIR} -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake &&
+            ${CMAKE_COMMAND} ${CSFML_BUILD_VARIABLES} -B ${CSFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -S ${CSFML_DIR} &&
             ${CMAKE_COMMAND} --build ${CSFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} --config ${CMAKE_BUILD_TYPE}
     )
 
@@ -57,6 +67,21 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
             ARGS -E copy ${CSFML_SHARED_LIBS_DIR}/csfml-${MODULE}${LINK_EXTENSION}-2.dll ${CMAKE_BINARY_DIR}/bin
         )
     endforeach(MODULE)
+    set(OTHER_DLL_FILES
+        #${VCPKG_BIN}/freetype.dll
+        #${VCPKG_BIN}/bz2.dll
+        #${VCPKG_BIN}/brotlidec.dll
+        #${VCPKG_BIN}/brotlicommon.dll
+        #${VCPKG_BIN}/libpng16.dll
+    )
+    foreach(OTHER_DLL_FILE ${OTHER_DLL_FILES})
+        add_custom_command(
+            TARGET ${BINARY_NAME}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND}
+            ARGS -E copy ${OTHER_DLL_FILE} ${CMAKE_BINARY_DIR}/bin
+        )
+    endforeach(OTHER_DLL_FILE)
 endif()
 
 target_include_directories(${BINARY_NAME} PRIVATE include)
