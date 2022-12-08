@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.19)
 project(radar C)
 
 set(CMAKE_C_STANDARD 23)
@@ -78,7 +78,7 @@ if (${WIN32})
             TARGET ${BINARY_NAME}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND}
-            ARGS -E copy ${CSFML_SHARED_LIBS_DIR}/csfml-${MODULE}${LINK_EXTENSION}-2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+            ARGS -E copy ${CSFML_SHARED_LIBS_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}csfml-${MODULE}${LINK_EXTENSION}-2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
         )
     endforeach(MODULE)
 endif()
