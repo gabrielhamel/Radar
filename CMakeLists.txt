@@ -15,6 +15,8 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
 set_target_properties(${BINARY_NAME}
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin
 )
 
 set(CSFML_MODULES
@@ -22,6 +24,11 @@ set(CSFML_MODULES
     system
     window
 )
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+    message(STATUS "Build type not specified: defaulting to Debug.")
+endif()
 
 if (${WIN32})
     if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
@@ -45,8 +52,9 @@ if (${WIN32})
         -DSFML_DIR=${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER}
     )
 
-    add_custom_command(TARGET ${BINARY_NAME} PRE_LINK
+    add_custom_command(TARGET ${BINARY_NAME} PRE_BUILD
         COMMAND
+            git submodule update --init &&
             ${CMAKE_COMMAND} ${SFML_BUILD_VARIABLES} -B ${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -S ${SFML_DIR} &&
             ${CMAKE_COMMAND} --build ${SFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} --config ${CMAKE_BUILD_TYPE} &&
             ${CMAKE_COMMAND} ${CSFML_BUILD_VARIABLES} -B ${CSFML_DIR}/${CMAKE_BUILD_TYPE_LOWER} -S ${CSFML_DIR} &&
@@ -70,7 +78,7 @@ if (${WIN32})
             TARGET ${BINARY_NAME}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND}
-            ARGS -E copy ${CSFML_SHARED_LIBS_DIR}/csfml-${MODULE}${LINK_EXTENSION}-2.dll ${CMAKE_BINARY_DIR}/bin
+            ARGS -E copy ${CSFML_SHARED_LIBS_DIR}/csfml-${MODULE}${LINK_EXTENSION}-2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
         )
     endforeach(MODULE)
 endif()
