@@ -45,3 +45,24 @@ cmake --build dist
 cd dist/bin
 ./radar
 ```
+
+### Linux
+
+**Needs:**
+
+- Build essentials
+- CSFML package (sudo apt install libcsfml-dev / sudo dnf install CSFML)
+
+**Build**
+
+```
+cmake -DCMAKE_BUILD_TYPE=Release -B dist -S .
+cmake --build dist
+```
+
+**Launch**
+
+```
+cd dist/bin
+./radar
+```
