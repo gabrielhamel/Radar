@@ -9,6 +9,7 @@ int main()
     if (engine == NULL) {
         return EXIT_FAILURE;
     }
+    engine_load_scene(engine, create_main_scene());
     engine_run(engine);
     engine_destroy(engine);
     return EXIT_SUCCESS;
