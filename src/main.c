@@ -11,7 +11,7 @@ static void bing_chilling(void *context)
 
 scene_t *create_main_scene(void)
 {
-    scene_t *scene = malloc(sizeof(scene_t));
+    scene_t *scene = scene_create();
     events_handler_t *eh = eh_create();
 
     scene_subscribe_event_handler(scene, eh);

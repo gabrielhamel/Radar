@@ -13,6 +13,7 @@ typedef struct {
     LIST_HEAD(, events_handler_s) events_handlers;
 } scene_t;
 
+scene_t *scene_create(void);
 void scene_handle_event(scene_t *scene, sfEvent *event);
 void scene_subscribe_event_handler(scene_t *scene, events_handler_t *handler);
 
