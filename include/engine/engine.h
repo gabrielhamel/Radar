@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <SFML/Graphics.h>
+#include <stdbool.h>
 
 #include "scene.h"
 #include "events.h"
@@ -14,7 +15,8 @@ typedef struct {
     scene_t *scene;
 } engine_t;
 
-engine_t *engine_init(void);
+engine_t *engine_get(void);
+bool engine_init(engine_t *engine);
 void engine_destroy(engine_t *);
 void engine_run(engine_t *engine);
 void engine_load_scene(engine_t *engine, scene_t *scene);

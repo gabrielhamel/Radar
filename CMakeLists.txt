@@ -18,6 +18,7 @@ endif()
 add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/main.c
     ${PROJECT_SOURCE_DIR}/src/engine/engine.c
+    ${PROJECT_SOURCE_DIR}/src/engine/scene.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/handler.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/keys.c
 )

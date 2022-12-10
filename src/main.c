@@ -4,9 +4,9 @@
 
 static void bing_chilling(void *context)
 {
-    engine_t *ptr = (engine_t *)context;
+    sfRenderWindow *window = engine_get()->window;
 
-    sfRenderWindow_close(ptr->window);
+    sfRenderWindow_close(window);
 }
 
 scene_t *create_main_scene(void)
@@ -14,16 +14,16 @@ scene_t *create_main_scene(void)
     scene_t *scene = malloc(sizeof(scene_t));
     events_handler_t *eh = eh_create();
 
-    scene->events_handler = eh;
-    eh_bind_key_pressed(eh, sfKeyA, (void (*)(void *))bing_chilling);
+    scene_subscribe_event_handler(scene, eh);
+    eh_bind_key_pressed(eh, sfKeyA, bing_chilling, NULL);
     return scene;
 }
 
 int main()
 {
-    engine_t *engine = engine_init();
+    engine_t *engine = engine_get();
 
-    if (engine == NULL) {
+    if (engine_init(engine) == false) {
         return EXIT_FAILURE;
     }
     engine_load_scene(engine, create_main_scene());

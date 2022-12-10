@@ -11,7 +11,7 @@ events_handler_t *eh_create(void)
     return handler;
 }
 
-void eh_handle_event(events_handler_t *handler, sfEvent *event, void *scene)
+void eh_handle_event(events_handler_t *handler, sfEvent *event)
 {
     struct eh_bind_s *it = NULL;
 
@@ -19,14 +19,14 @@ void eh_handle_event(events_handler_t *handler, sfEvent *event, void *scene)
         case sfEvtKeyPressed:
             LIST_FOREACH(it, &handler->key_pressed_binds, entry) {
                 if (event->key.code == it->key) {
-                    it->callback(scene);
+                    it->callback(it->context);
                 }
             }
             break;
         case sfEvtKeyReleased:
             LIST_FOREACH(it, &handler->key_released_binds, entry) {
                 if (event->key.code == it->key) {
-                    it->callback(scene);
+                    it->callback(it->context);
                 }
             }
             break;

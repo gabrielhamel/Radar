@@ -4,6 +4,17 @@
 #include "engine/engine.h"
 #include "engine/events.h"
 
+
+engine_t *engine_get(void)
+{
+    static engine_t *instance = NULL;
+
+    if (instance == NULL) {
+        instance = malloc(sizeof(engine_t));
+    }
+    return instance;
+}
+
 static sfRenderWindow *window_create(void)
 {
     sfVideoMode mode = {800, 600, 32};
@@ -26,10 +37,8 @@ static sfRenderWindow *window_create(void)
     return window;
 }
 
-engine_t *engine_init(void)
+bool engine_init(engine_t *engine)
 {
-    engine_t *engine = malloc(sizeof(engine_t));
-
     engine->window = window_create();
     engine->event = (sfEvent){0};
     engine->clock = sfClock_create();
@@ -37,9 +46,9 @@ engine_t *engine_init(void)
     engine->scene = NULL;
     if (engine->window == NULL) {
         engine_destroy(engine);
-        return NULL;
+        return false;
     }
-    return engine;
+    return true;
 }
 
 void engine_destroy(engine_t *engine)
@@ -55,7 +64,7 @@ void engine_run(engine_t *engine)
     while (sfRenderWindow_isOpen(engine->window)) {
         while (sfRenderWindow_pollEvent(engine->window, &engine->event)) {
             // Handle events
-            eh_handle_event(engine->scene->events_handler, &engine->event, engine);
+            scene_handle_event(engine->scene, &engine->event);
         }
         engine->elapsed_time = sfClock_restart(engine->clock);
         sfRenderWindow_clear(engine->window, sfBlack);
