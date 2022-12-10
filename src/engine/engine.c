@@ -1,7 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
 
-#include "engine.h"
-#include "events.h"
+#include "engine/engine.h"
+#include "engine/events.h"
 
 static sfRenderWindow *window_create(void)
 {
@@ -10,7 +11,9 @@ static sfRenderWindow *window_create(void)
 
     if (sfVideoMode_isValid(mode) == sfFalse) {
         perror("Video mode not supported");
+#ifndef CSFML_SYSTEM_MACOS
         return NULL;
+#endif
     }
     window = sfRenderWindow_create(mode, "Radar", sfDefaultStyle, NULL);
     if (window == NULL) {

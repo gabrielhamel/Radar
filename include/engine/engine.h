@@ -4,6 +4,7 @@
 #include <SFML/Graphics.h>
 
 #include "scene.h"
+#include "events.h"
 
 typedef struct {
     sfRenderWindow *window;

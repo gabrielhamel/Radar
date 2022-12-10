@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "events.h"
+#include "engine/events.h"
 
 void eh_bind_key_pressed(events_handler_t *handler, sfKeyCode key, void (*callback)(void *))
 {
