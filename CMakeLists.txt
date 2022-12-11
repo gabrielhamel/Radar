@@ -21,6 +21,7 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/engine/scene.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/handler.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/keys.c
+    ${PROJECT_SOURCE_DIR}/src/engine/ui/element.c
 )
 
 set_target_properties(${BINARY_NAME}

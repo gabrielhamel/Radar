@@ -63,12 +63,11 @@ void engine_run(engine_t *engine)
 {
     while (sfRenderWindow_isOpen(engine->window)) {
         while (sfRenderWindow_pollEvent(engine->window, &engine->event)) {
-            // Handle events
             scene_handle_event(engine->scene, &engine->event);
         }
         engine->elapsed_time = sfClock_restart(engine->clock);
         sfRenderWindow_clear(engine->window, sfBlack);
-        // Display
+        scene_render_ui(engine->scene, engine->window);
         sfRenderWindow_display(engine->window);
     }
 }
