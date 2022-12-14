@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "engine/ui.h"
+#include "engine/engine.h"
 
 ui_element_t *ui_element_create(sfIntRect renderRectangle)
 {
@@ -11,6 +12,8 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     elem->render_texture = (sfTexture *)sfRenderTexture_getTexture(elem->render_target);
     elem->render_sprite = sfSprite_create();
     elem->background = sfRectangleShape_create();
+    elem->on_hover = NULL;
+    elem->hover_context = NULL;
     sfRectangleShape_setPosition(elem->background, (sfVector2f){0, 0});
     sfRectangleShape_setSize(elem->background, (sfVector2f){renderRectangle.width, renderRectangle.height});
     sfRectangleShape_setFillColor(elem->background, sfTransparent);
@@ -24,6 +27,17 @@ void ui_element_append_children(ui_element_t *parent, ui_element_t *child)
     LIST_INSERT_HEAD(&parent->children, child, entry);
 }
 
+void ui_element_set_background_color(ui_element_t *element, sfColor color)
+{
+    sfRectangleShape_setFillColor(element->background, color);
+}
+
+void ui_element_set_hover_behavior(ui_element_t *element, void (*on_hover)(void *context), void *context)
+{
+    element->on_hover = on_hover;
+    element->hover_context = context;
+}
+
 void ui_element_render(ui_element_t *element, sfRenderTexture *parent_render)
 {
     struct ui_element_s *it = NULL;
@@ -34,4 +48,19 @@ void ui_element_render(ui_element_t *element, sfRenderTexture *parent_render)
     }
     sfRenderTexture_display(element->render_target);
     sfRenderTexture_drawSprite(parent_render, element->render_sprite, NULL);
+}
+
+void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
+{
+    struct ui_element_s *it = NULL;
+    sfVector2i mouse_pos = sfMouse_getPositionRenderWindow(engine_get()->window);
+    sfFloatRect bounds = sfSprite_getGlobalBounds(element->render_sprite);
+
+    if (element->on_hover && sfFloatRect_contains(&bounds, mouse_pos.x, mouse_pos.y) == sfTrue) {
+        element->on_hover(element->hover_context);
+    }
+
+    LIST_FOREACH(it, &element->children, entry) {
+        ui_element_update(it, elapsed_time);
+    }
 }

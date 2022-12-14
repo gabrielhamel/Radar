@@ -66,6 +66,7 @@ void engine_run(engine_t *engine)
             scene_handle_event(engine->scene, &engine->event);
         }
         engine->elapsed_time = sfClock_restart(engine->clock);
+        ui_element_update(engine->scene->ui_element_root, &engine->elapsed_time);
         sfRenderWindow_clear(engine->window, sfBlack);
         scene_render_ui(engine->scene, engine->window);
         sfRenderWindow_display(engine->window);

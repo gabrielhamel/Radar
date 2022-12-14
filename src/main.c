@@ -9,6 +9,21 @@ static void bing_chilling(void *context)
     sfRenderWindow_close(window);
 }
 
+void button_on_hover(ui_element_t *button)
+{
+    ui_element_set_background_color(button, sfYellow);
+}
+
+ui_element_t *create_button(void)
+{
+    ui_element_t *container = ui_element_create((sfIntRect){200, 100, 400, 100});
+
+    ui_element_set_background_color(container, sfGreen);
+    ui_element_set_hover_behavior(container, button_on_hover, container);
+
+    return container;
+}
+
 scene_t *create_main_scene(void)
 {
     scene_t *scene = scene_create();
@@ -18,12 +33,8 @@ scene_t *create_main_scene(void)
     eh_bind_key_pressed(eh, sfKeyA, bing_chilling, NULL);
 
     ui_element_t *root = scene->ui_element_root;
-    ui_element_t *text_box = ui_element_create((sfIntRect){200, 100, 400, 100});
-    sfRectangleShape_setFillColor(text_box->background, sfWhite);
-    ui_element_t *sub_text = ui_element_create((sfIntRect){0, 0, 50, 50});
-    sfRectangleShape_setFillColor(sub_text->background, sfRed);
-    ui_element_append_children(text_box, sub_text);
-    ui_element_append_children(root, text_box);
+    ui_element_t *button = create_button();
+    ui_element_append_children(root, button);
     return scene;
 }
 
