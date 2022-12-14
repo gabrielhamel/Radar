@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "engine/engine.h"
 #include "engine/events.h"
@@ -39,6 +40,12 @@ ui_element_t *create_button(sfIntRect bounds, sfColor normal, sfColor on_hover)
     ui_element_set_background_color(container, normal);
     ui_element_set_hover_event(container, hover_event);
     ui_element_set_click_event(container, click_event);
+    sfFont *font = sfFont_createFromFile("assets/fonts/Hack-Regular.ttf");
+    ui_element_set_font(container, font);
+    sfUint32 textOriginal[] = {'C', 'l', 'i', 'c', 'k', '\0'};
+    sfUint32 *text = malloc(sizeof(textOriginal));
+    memcpy(text, textOriginal, sizeof(textOriginal));
+    ui_element_set_text(container, text);
     return container;
 }
 
@@ -52,6 +59,8 @@ scene_t *create_main_scene(void)
 
     ui_element_t *root = scene->ui_element_root;
     ui_element_t *button = create_button((sfIntRect){200, 100, 400, 100}, sfGreen, sfYellow);
+
+
     ui_element_append_children(root, button);
     return scene;
 }
