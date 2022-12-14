@@ -17,6 +17,7 @@ typedef struct ui_element_s {
     void (*on_leave)(void *context);
     void *hover_context;
     bool is_hovered;
+    sfIntRect absolute_bounds;
 } ui_element_t;
 
 ui_element_t *ui_element_create(sfIntRect renderRectangle);

@@ -15,6 +15,7 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     elem->on_hover = NULL;
     elem->hover_context = NULL;
     elem->is_hovered = false;
+    elem->absolute_bounds = renderRectangle;
     sfRectangleShape_setPosition(elem->background, (sfVector2f){0, 0});
     sfRectangleShape_setSize(elem->background, (sfVector2f){renderRectangle.width, renderRectangle.height});
     sfRectangleShape_setFillColor(elem->background, sfTransparent);
@@ -25,6 +26,11 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
 
 void ui_element_append_children(ui_element_t *parent, ui_element_t *child)
 {
+    sfIntRect parent_bounds = parent->absolute_bounds;
+    sfVector2f child_pos = sfSprite_getPosition(child->render_sprite);
+
+    child->absolute_bounds = (sfIntRect){ parent_bounds.left + child_pos.x, parent_bounds.top + child_pos.y,
+                                          child->absolute_bounds.width, child->absolute_bounds.height };
     LIST_INSERT_HEAD(&parent->children, child, entry);
 }
 
@@ -56,9 +62,9 @@ void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
 {
     struct ui_element_s *it = NULL;
     sfVector2i mouse_pos = sfMouse_getPositionRenderWindow(engine_get()->window);
-    sfFloatRect bounds = sfSprite_getGlobalBounds(element->render_sprite);
+    sfIntRect bounds = element->absolute_bounds;
 
-    if (sfFloatRect_contains(&bounds, mouse_pos.x, mouse_pos.y) == sfTrue) {
+    if (sfIntRect_contains(&bounds, mouse_pos.x, mouse_pos.y) == sfTrue) {
         element->is_hovered = true;
         if (element->on_hover) {
             element->on_hover(element->hover_context);
