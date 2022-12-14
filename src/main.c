@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "engine/engine.h"
+#include "engine/events.h"
 
 static void bing_chilling(void *context)
 {
@@ -32,19 +33,20 @@ void button2_on_leave(ui_element_t *button)
 ui_element_t *create_button(sfIntRect bounds, sfColor normal, sfColor on_hover)
 {
     ui_element_t *container = ui_element_create(bounds);
+    hover_event_t *event = ui_hover_event_create(button_on_hover, button_on_leave, container);
 
     ui_element_set_background_color(container, normal);
-    ui_element_set_hover_behavior(container, button_on_hover, button_on_leave, container);
-
+    ui_element_set_hover_event(container, event);
     return container;
 }
 
 ui_element_t *create_button2(sfIntRect bounds, sfColor normal, sfColor on_hover)
 {
     ui_element_t *container = ui_element_create(bounds);
+    hover_event_t *event = ui_hover_event_create(button2_on_hover, button2_on_leave, container);
 
     ui_element_set_background_color(container, normal);
-    ui_element_set_hover_behavior(container, button2_on_hover, button2_on_leave, container);
+    ui_element_set_hover_event(container, event);
 
     return container;
 }

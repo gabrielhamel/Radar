@@ -12,8 +12,7 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     elem->render_texture = (sfTexture *)sfRenderTexture_getTexture(elem->render_target);
     elem->render_sprite = sfSprite_create();
     elem->background = sfRectangleShape_create();
-    elem->on_hover = NULL;
-    elem->hover_context = NULL;
+    elem->hover_event = NULL;
     elem->is_hovered = false;
     elem->absolute_bounds = renderRectangle;
     sfRectangleShape_setPosition(elem->background, (sfVector2f){0, 0});
@@ -39,11 +38,9 @@ void ui_element_set_background_color(ui_element_t *element, sfColor color)
     sfRectangleShape_setFillColor(element->background, color);
 }
 
-void ui_element_set_hover_behavior(ui_element_t *element, void (*on_hover)(void *context), void (*on_leave)(void *context), void *context)
+void ui_element_set_hover_event(ui_element_t *element, hover_event_t *event)
 {
-    element->on_hover = on_hover;
-    element->on_leave = on_leave;
-    element->hover_context = context;
+    element->hover_event = event;
 }
 
 void ui_element_render(ui_element_t *element, sfRenderTexture *parent_render)
@@ -64,15 +61,15 @@ void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
     sfVector2i mouse_pos = sfMouse_getPositionRenderWindow(engine_get()->window);
     sfIntRect bounds = element->absolute_bounds;
 
-    if (sfIntRect_contains(&bounds, mouse_pos.x, mouse_pos.y) == sfTrue) {
+    if (element->hover_event && sfIntRect_contains(&bounds, mouse_pos.x, mouse_pos.y) == sfTrue) {
         element->is_hovered = true;
-        if (element->on_hover) {
-            element->on_hover(element->hover_context);
+        if (element->hover_event && element->hover_event->enter) {
+            element->hover_event->enter(element->hover_event->context);
         }
-    } else if (element->is_hovered) {
+    } else if (element->hover_event && element->is_hovered) {
         element->is_hovered = false;
-        if (element->on_leave) {
-            element->on_leave(element->hover_context);
+        if (element->hover_event->leave) {
+            element->hover_event->leave(element->hover_event->context);
         }
     }
 
