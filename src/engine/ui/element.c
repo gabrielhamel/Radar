@@ -14,6 +14,8 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     elem->background = sfRectangleShape_create();
     elem->hover_event = NULL;
     elem->is_hovered = false;
+    elem->click_event = NULL;
+    elem->is_clicked = false;
     elem->absolute_bounds = renderRectangle;
     sfRectangleShape_setPosition(elem->background, (sfVector2f){0, 0});
     sfRectangleShape_setSize(elem->background, (sfVector2f){renderRectangle.width, renderRectangle.height});
@@ -38,9 +40,14 @@ void ui_element_set_background_color(ui_element_t *element, sfColor color)
     sfRectangleShape_setFillColor(element->background, color);
 }
 
-void ui_element_set_hover_event(ui_element_t *element, hover_event_t *event)
+void ui_element_set_hover_event(ui_element_t *element, state_event_t *event)
 {
     element->hover_event = event;
+}
+
+void ui_element_set_click_event(ui_element_t *element, state_event_t *event)
+{
+    element->click_event = event;
 }
 
 void ui_element_render(ui_element_t *element, sfRenderTexture *parent_render)
@@ -60,19 +67,31 @@ void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
     struct ui_element_s *it = NULL;
     sfVector2i mouse_pos = sfMouse_getPositionRenderWindow(engine_get()->window);
     sfIntRect bounds = element->absolute_bounds;
+    bool mouse_collision = sfIntRect_contains(&bounds, mouse_pos.x, mouse_pos.y);
+    bool mouse_click = sfMouse_isButtonPressed(sfMouseLeft);
 
-    if (element->hover_event && sfIntRect_contains(&bounds, mouse_pos.x, mouse_pos.y) == sfTrue) {
+    if (!element->is_hovered && element->hover_event && mouse_collision) {
         element->is_hovered = true;
-        if (element->hover_event && element->hover_event->enter) {
+        if (element->hover_event->enter) {
             element->hover_event->enter(element->hover_event->context);
         }
-    } else if (element->hover_event && element->is_hovered) {
+    } else if (element->is_hovered && element->hover_event && !mouse_collision) {
         element->is_hovered = false;
         if (element->hover_event->leave) {
             element->hover_event->leave(element->hover_event->context);
         }
     }
-
+    if (!element->is_clicked && element->click_event && mouse_collision && mouse_click) {
+        element->is_clicked = true;
+        if (element->click_event->enter) {
+            element->click_event->enter(element->click_event->context);
+        }
+    } else if (element->is_clicked && element->click_event && !(mouse_collision && mouse_click)) {
+        element->is_clicked = false;
+        if (element->click_event->leave) {
+            element->click_event->leave(element->click_event->context);
+        }
+    }
     LIST_FOREACH(it, &element->children, entry) {
         ui_element_update(it, elapsed_time);
     }

@@ -5,8 +5,8 @@ typedef struct {
     void *context;
     void (*enter)(void *context);
     void (*leave)(void *context);
-} hover_event_t;
+} state_event_t;
 
-hover_event_t *ui_hover_event_create(void (*enter)(void *context), void (*leave)(void *context), void *context);
+state_event_t *ui_state_event_create(void (*enter)(void *context), void (*leave)(void *context), void *context);
 
 #endif // UI_EVENTS_H
