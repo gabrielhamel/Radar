@@ -23,6 +23,7 @@ scene_t *scene_create(void)
     sfVector2u window_size = sfRenderWindow_getSize(engine_get()->window);
 
     LIST_INIT(&scene->events_handlers);
+    LIST_INIT(&scene->entities);
     scene->ui_element_root = ui_element_create((sfIntRect){0, 0, window_size.x, window_size.y});
     return scene;
 }
@@ -36,4 +37,32 @@ void scene_render_ui(scene_t *scene, sfRenderWindow *window)
     }
     sfRenderTexture_display(scene->ui_element_root->render_target);
     sfRenderWindow_drawSprite(window, scene->ui_element_root->render_sprite, NULL);
+}
+
+ui_element_t *scene_get_ui_root(scene_t *scene)
+{
+    return scene->ui_element_root;
+}
+
+void scene_update_entities(scene_t *scene, sfTime *elapsed_time)
+{
+    struct entity_s *it = NULL;
+
+    LIST_FOREACH(it, &scene->entities, entry) {
+        entity_update(it, elapsed_time);
+    }
+}
+
+void scene_render_entities(scene_t *scene, sfRenderWindow *window)
+{
+    struct entity_s *it = NULL;
+
+    LIST_FOREACH(it, &scene->entities, entry) {
+        entity_render(it, window);
+    }
+}
+
+void scene_append_entity(scene_t *scene, entity_t *entity)
+{
+    LIST_INSERT_HEAD(&scene->entities, entity, entry);
 }

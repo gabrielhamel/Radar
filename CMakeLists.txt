@@ -23,6 +23,7 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/engine/events/keys.c
     ${PROJECT_SOURCE_DIR}/src/engine/ui/element.c
     ${PROJECT_SOURCE_DIR}/src/engine/ui/events.c
+    ${PROJECT_SOURCE_DIR}/src/engine/entity/entity.c
 )
 
 set_target_properties(${BINARY_NAME}
