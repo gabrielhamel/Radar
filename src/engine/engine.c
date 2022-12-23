@@ -61,6 +61,9 @@ void engine_destroy(engine_t *engine)
 
 void engine_run(engine_t *engine)
 {
+    if (engine->scene == NULL) {
+        return;
+    }
     while (sfRenderWindow_isOpen(engine->window)) {
         while (sfRenderWindow_pollEvent(engine->window, &engine->event)) {
             scene_handle_event(engine->scene, &engine->event);
