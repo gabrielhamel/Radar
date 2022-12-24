@@ -39,7 +39,9 @@ static sfRenderWindow *engine_window_create(engine_params_t params)
 
 bool engine_init(engine_t *engine, engine_params_t params)
 {
+    sfImage *app_icon = sfImage_createFromFile(params.app_icon);
     engine->window = engine_window_create(params);
+    sfRenderWindow_setIcon(engine->window, 256, 256, sfImage_getPixelsPtr(app_icon));
     engine->event = (sfEvent){0};
     engine->clock = sfClock_create();
     engine->elapsed_time = sfTime_Zero;

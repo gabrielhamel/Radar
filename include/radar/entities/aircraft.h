@@ -9,6 +9,9 @@
 typedef struct aircraft_s {
     LIST_ENTRY(aircraft_s) entry;
     entity_t *entity;
+    sfVector2f departure;
+    sfVector2f arrival;
+    float speed;
 } aircraft_t;
 
 aircraft_t *aircraft_create_from_definition(radar_entity_definition_t *definition);

@@ -12,7 +12,7 @@ typedef struct {
 typedef struct entity_s {
     LIST_ENTRY(entity_s) entry;
     sfVector2f speed;
-    sfSprite *sprite;
+    sfRectangleShape *sprite;
 } entity_t;
 
 entity_t *entity_create(entity_params_t params);

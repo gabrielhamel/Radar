@@ -13,7 +13,8 @@ int main(void)
     if (engine_init(engine, (engine_params_t){
         .title = string_to_utf8("Radar"),
         .width = 1920,
-        .height = 1080
+        .height = 1080,
+        .app_icon = "./assets/favicon.png"
     }) == false) {
         return EXIT_FAILURE;
     }

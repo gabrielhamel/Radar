@@ -7,7 +7,7 @@ tower_t *tower_create_from_definition(radar_entity_definition_t *definition)
     tower_t *tower = malloc(sizeof(tower_t));
 
     tower->entity = entity_create((entity_params_t){
-        .position = (sfVector2f){definition->args[0], definition->args[1]}
+        .position = (sfVector2f){definition->args[0] - 10, definition->args[1] - 10}
     });
     // TODO refacto this dope stuff
     sfUint8 pixels[20 * 20 * 4] = {0};
@@ -19,7 +19,8 @@ tower_t *tower_create_from_definition(radar_entity_definition_t *definition)
     }
     sfTexture *player_texture = sfTexture_create(20, 20);
     sfTexture_updateFromPixels(player_texture, pixels, 20, 20, 0, 0);
-    sfSprite_setTexture(tower->entity->sprite, player_texture, sfTrue);
+    sfRectangleShape_setSize(tower->entity->sprite, (sfVector2f){20, 20});
+    sfRectangleShape_setTexture(tower->entity->sprite, player_texture, sfTrue);
     return tower;
 }
 

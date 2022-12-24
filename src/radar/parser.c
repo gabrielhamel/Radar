@@ -67,7 +67,8 @@ static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_n
     if (read_length < 1) {
         return NULL;
     } else if (read_length == 1) {
-        return parser_parse_entity(file, ++(*line_nb));
+        (*line_nb)++;
+        return parser_parse_entity(file, line_nb);
     }
     token = strtok(line, ARG_SEPARATORS);
     entity_filter = parser_find_entity_type(token, line_nb);
