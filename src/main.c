@@ -1,32 +1,25 @@
 #include <stdlib.h>
 
-#include "radar/parser.h"
+#include "radar/simulation.h"
+
 #include "engine/engine.h"
+#include "engine/text/unicode.h"
 
 int main(void)
 {
-    radar_definition_t *def = parser_read("./assets/game.rdr");
-    radar_entity_definition_t *entity = NULL;
+    engine_t *engine = engine_get();
+    simulation_t *simulation;
 
-    if (def == NULL) {
+    if (engine_init(engine, (engine_params_t){
+        .title = string_to_utf8("Radar"),
+        .width = 1920,
+        .height = 1080
+    }) == false) {
         return EXIT_FAILURE;
     }
-    LIST_FOREACH(entity, &def->entities, entry) {
-        if (entity->type == AIRCRAFT) {
-            printf("Aircraft %d %d %d %d %d %d\n", entity->args[0], entity->args[1],entity->args[2],entity->args[3],entity->args[4],entity->args[5]);
-        } else if (entity->type == TOWER) {
-            printf("TOWER %d %d %d\n", entity->args[0], entity->args[1], entity->args[2]);
-        }
-    }
-
-
-//    engine_t *engine = engine_get();
-//
-//    if (engine_init(engine) == false) {
-//        return EXIT_FAILURE;
-//    }
-    //engine_load_scene(engine, create_main_scene());
-//    engine_run(engine);
-//    engine_destroy(engine);
+    simulation = simulation_create_from_script("./assets/game.rdr");
+    engine_load_scene(engine, simulation->scene);
+    engine_run(engine);
+    engine_destroy(engine);
     return EXIT_SUCCESS;
 }

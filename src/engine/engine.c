@@ -15,9 +15,9 @@ engine_t *engine_get(void)
     return instance;
 }
 
-static sfRenderWindow *window_create(void)
+static sfRenderWindow *engine_window_create(engine_params_t params)
 {
-    sfVideoMode mode = {800, 600, 32};
+    sfVideoMode mode = {params.width, params.height, 32};
     sfRenderWindow *window = NULL;
 
     if (sfVideoMode_isValid(mode) == sfFalse) {
@@ -26,7 +26,7 @@ static sfRenderWindow *window_create(void)
         return NULL;
 #endif
     }
-    window = sfRenderWindow_create(mode, "Radar", sfDefaultStyle, NULL);
+    window = sfRenderWindow_createUnicode(mode, params.title, sfTitlebar | sfClose, NULL);
     if (window == NULL) {
         perror("Cannot open the required window");
         return NULL;
@@ -37,9 +37,9 @@ static sfRenderWindow *window_create(void)
     return window;
 }
 
-bool engine_init(engine_t *engine)
+bool engine_init(engine_t *engine, engine_params_t params)
 {
-    engine->window = window_create();
+    engine->window = engine_window_create(params);
     engine->event = (sfEvent){0};
     engine->clock = sfClock_create();
     engine->elapsed_time = sfTime_Zero;
@@ -69,10 +69,10 @@ void engine_run(engine_t *engine)
             scene_handle_event(engine->scene, &engine->event);
         }
         engine->elapsed_time = sfClock_restart(engine->clock);
-        scene_update_entities(engine->scene, &engine->elapsed_time);
+        scene_update(engine->scene, &engine->elapsed_time);
         ui_element_update(engine->scene->ui_element_root, &engine->elapsed_time);
         sfRenderWindow_clear(engine->window, sfBlack);
-        scene_render_entities(engine->scene, engine->window);
+        scene_render(engine->scene, engine->window);
         scene_render_ui(engine->scene, engine->window);
         sfRenderWindow_display(engine->window);
     }

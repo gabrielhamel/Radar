@@ -2,11 +2,12 @@
 
 #include "engine/entity/entity.h"
 
-entity_t *entity_create(void)
+entity_t *entity_create(entity_params_t params)
 {
     entity_t *entity = malloc(sizeof(entity_t));
 
     entity->sprite = sfSprite_create();
+    sfSprite_setPosition(entity->sprite, params.position);
     entity->speed = (sfVector2f){0};
     return entity;
 }
