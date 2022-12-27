@@ -1,41 +1,28 @@
-#include <stdlib.h>
 #include <math.h>
 
+#include "radar/components/position.h"
+#include "radar/components/speed.h"
+#include "radar/components/sprite.h"
 #include "radar/entities/aircraft.h"
 
-aircraft_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
+entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
 {
-    aircraft_t *aircraft = malloc(sizeof(aircraft_t));
-    aircraft->departure = (sfVector2f){definition->args[0], definition->args[1]};
-    aircraft->arrival = (sfVector2f){definition->args[2], definition->args[3]};
-    aircraft->speed = definition->args[4];
-    aircraft->entity = entity_create((entity_params_t){
-        .position = (sfVector2f){aircraft->departure.x - 10, aircraft->departure.y - 10}
+    entity_t *aircraft = entity_create();
+    component_t *position = position_component_create((sfVector2f){
+        definition->args[0],
+        definition->args[1]
     });
-    float angle = (aircraft->arrival.y - aircraft->departure.y) / (aircraft->arrival.x - aircraft->departure.x);
-    aircraft->entity->speed = (sfVector2f){
-        .x = cosf(angle) * aircraft->speed,
-        .y = sinf(angle) * aircraft->speed
-    };
-    sfRectangleShape_rotate(aircraft->entity->sprite, angle * (180.0 / M_PI));
-    sfRectangleShape_setSize(aircraft->entity->sprite, (sfVector2f){20, 20});
-    sfColor color_mask = sfWhite;
-    sfImage *aircraft_image = sfImage_createFromFile("./assets/aircraft.png");
-    sfUint8 *aircraft_pixels = sfImage_getPixelsPtr(aircraft_image);
-    for (size_t pixel = 0; pixel < 20 * 20; pixel++) {
-        aircraft_pixels[pixel * 4 + 0] = color_mask.r;
-        aircraft_pixels[pixel * 4 + 1] = color_mask.g;
-        aircraft_pixels[pixel * 4 + 2] = color_mask.b;
-    }
-    sfTexture *aircraft_texture = sfTexture_createFromImage(aircraft_image, NULL);
-    sfRectangleShape_setTexture(aircraft->entity->sprite, aircraft_texture, sfTrue);
+    float angle = ((float)definition->args[3] - (float)definition->args[1]) / ((float)definition->args[2] - (float)definition->args[0]);
+    component_t *speed = speed_component_create((sfVector2f){
+        cosf(angle) * (float)definition->args[4],
+        sinf(angle) * (float)definition->args[4]
+    });
+    component_t *sprite = sprite_component_create_from_file("./assets/aircraft.png", (sprite_params_t){
+        .position = COMPONENT_DATA(position, position_component_t)->position
+    });
 
-    sfRectangleShape_setOutlineColor(aircraft->entity->sprite, sfYellow);
-    sfRectangleShape_setOutlineThickness(aircraft->entity->sprite, 1);
+    entity_assign_component(aircraft, position);
+    entity_assign_component(aircraft, speed);
+    entity_assign_component(aircraft, sprite);
     return aircraft;
-}
-
-void aircraft_update(aircraft_t *aircraft, sfTime *elapsed_time)
-{
-    // TODO
 }

@@ -21,14 +21,21 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/simulation.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/aircraft.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/tower.c
+    ${PROJECT_SOURCE_DIR}/src/radar/components/position.c
+    ${PROJECT_SOURCE_DIR}/src/radar/components/speed.c
+    ${PROJECT_SOURCE_DIR}/src/radar/components/sprite.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/sprite_drawer.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/movement.c
     ${PROJECT_SOURCE_DIR}/src/engine/engine.c
     ${PROJECT_SOURCE_DIR}/src/engine/scene.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/handler.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/keys.c
     ${PROJECT_SOURCE_DIR}/src/engine/ui/element.c
     ${PROJECT_SOURCE_DIR}/src/engine/ui/events.c
-    ${PROJECT_SOURCE_DIR}/src/engine/entity/entity.c
     ${PROJECT_SOURCE_DIR}/src/engine/text/unicode.c
+    ${PROJECT_SOURCE_DIR}/src/engine/ecs/entity.c
+    ${PROJECT_SOURCE_DIR}/src/engine/ecs/component.c
+    ${PROJECT_SOURCE_DIR}/src/engine/ecs/system.c
 )
 
 set_target_properties(${BINARY_NAME}

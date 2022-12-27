@@ -1,26 +1,25 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "queue.h"
-#include "ui/element.h"
-#include "entity/entity.h"
+#include "ecs/entity.h"
+#include "ecs/system.h"
+
+typedef struct entity_system_subscribe_link_s {
+    LIST_ENTRY(entity_system_subscribe_link_s) entry;
+    system_t *system;
+    entity_t *entity;
+} entity_system_subscribe_link_t;
 
 typedef struct {
-    LIST_HEAD(, events_handler_s) events_handlers;
-    ui_element_t *ui_element_root;
     LIST_HEAD(, entity_s) entities;
-    void *update_context;
-    void (*update_delegate)(void *context, sfTime *elapsed_time);
+    LIST_HEAD(, system_s) systems;
+    LIST_HEAD(, entity_system_subscribe_link_s) entities_to_systems;
 } scene_t;
 
 scene_t *scene_create(void);
-void scene_handle_event(scene_t *scene, sfEvent *event);
-void scene_subscribe_event_handler(scene_t *scene, events_handler_t *handler);
-void scene_render_ui(scene_t *scene, sfRenderWindow *window);
-void scene_render(scene_t *scene, sfRenderWindow *window);
-void scene_update(scene_t *scene, sfTime *elapsed_time);
 void scene_append_entity(scene_t *scene, entity_t *entity);
-ui_element_t *scene_get_ui_root(scene_t *scene);
-void scene_set_update_delegate(scene_t *scene, void (*callback)(void *, sfTime *), void *context);
+bool scene_append_system(scene_t *scene, system_t *system);
+bool scene_subscribe_entity_to_system(scene_t *scene, entity_t *entity, system_type_t system_type);
+void scene_update_systems(scene_t *scene, sfTime *elapsed_time);
 
 #endif // SCENE_H

@@ -8,7 +8,7 @@
 int main(void)
 {
     engine_t *engine = engine_get();
-    simulation_t *simulation;
+    scene_t *scene = scene_create();
 
     if (engine_init(engine, (engine_params_t){
         .title = string_to_utf8("Radar"),
@@ -18,8 +18,11 @@ int main(void)
     }) == false) {
         return EXIT_FAILURE;
     }
-    simulation = simulation_create_from_script("./assets/game.rdr");
-    engine_load_scene(engine, simulation->scene);
+    if (radar_init_from_script(scene, "./assets/game.rdr") == false) {
+        // TODO Unload everything
+        return EXIT_FAILURE;
+    }
+    engine_load_scene(engine, scene);
     engine_run(engine);
     engine_destroy(engine);
     return EXIT_SUCCESS;

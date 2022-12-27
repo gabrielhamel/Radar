@@ -68,14 +68,17 @@ void engine_run(engine_t *engine)
     }
     while (sfRenderWindow_isOpen(engine->window)) {
         while (sfRenderWindow_pollEvent(engine->window, &engine->event)) {
-            scene_handle_event(engine->scene, &engine->event);
+//             scene_handle_event(engine->scene, &engine->event);
         }
         engine->elapsed_time = sfClock_restart(engine->clock);
-        scene_update(engine->scene, &engine->elapsed_time);
-        ui_element_update(engine->scene->ui_element_root, &engine->elapsed_time);
+//        scene_update(engine->scene, &engine->elapsed_time);
+//        ui_element_update(engine->scene->ui_element_root, &engine->elapsed_time);
         sfRenderWindow_clear(engine->window, sfBlack);
-        scene_render(engine->scene, engine->window);
-        scene_render_ui(engine->scene, engine->window);
+//        scene_render(engine->scene, engine->window);
+//        scene_render_ui(engine->scene, engine->window);
+        // Refacto this shit
+        scene_update_systems(engine->scene, &engine->elapsed_time);
+        //------------------ // end of shit
         sfRenderWindow_display(engine->window);
     }
 }
