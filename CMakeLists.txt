@@ -117,3 +117,5 @@ foreach(MODULE ${CSFML_MODULES})
         csfml-${MODULE}${LINK_EXTENSION}
     )
 endforeach(MODULE)
+
+target_link_libraries(${BINARY_NAME} m)
