@@ -12,7 +12,8 @@ entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
         definition->args[0],
         definition->args[1]
     });
-    float angle = ((float)definition->args[3] - (float)definition->args[1]) / ((float)definition->args[2] - (float)definition->args[0]);
+    float angle = atan(((float)definition->args[3] - (float)definition->args[1]) /
+            ((float)definition->args[2] - (float)definition->args[0]));
     component_t *speed = speed_component_create((sfVector2f){
         cos(angle) * (float)definition->args[4],
         sin(angle) * (float)definition->args[4]
@@ -20,6 +21,7 @@ entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
     component_t *sprite = sprite_component_create_from_file("./assets/aircraft.png", (sprite_params_t){
         .position = COMPONENT_DATA(position, position_component_t)->position
     });
+    sfSprite_setRotation(COMPONENT_DATA(sprite, sprite_component_t)->sprite, angle * 180.0 / M_PI);
 
     entity_assign_component(aircraft, position);
     entity_assign_component(aircraft, speed);

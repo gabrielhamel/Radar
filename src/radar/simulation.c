@@ -29,6 +29,7 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
                 break;
             case TOWER:
                 tower = tower_create_from_definition(entity);
+                scene_subscribe_entity_to_system(scene, tower, SPRITE_DRAWER_SYSTEM_TYPE);
                 scene_append_entity(scene, tower);
                 break;
         }
