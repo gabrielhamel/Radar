@@ -3,7 +3,7 @@
 #include "radar/components/speed.h"
 #include "radar/components/sprite.h"
 
-static void update(entity_t *entity, sfTime *elapsed_time, void *)
+static void update_handler(entity_t *entity, sfTime *elapsed_time, void *)
 {
     position_component_t *position_c = entity_get_component(entity, POSITION_COMPONENT_TYPE);
     speed_component_t *speed_c = entity_get_component(entity, SPEED_COMPONENT_TYPE);
@@ -17,7 +17,8 @@ static void update(entity_t *entity, sfTime *elapsed_time, void *)
 system_t *movement_system_create(void)
 {
     return system_create(MOVEMENT_SYSTEM_TYPE, (system_params_t){
-        .update_context = NULL,
-        .update_handler = update,
+        .context = NULL,
+        .render_handler = NULL,
+        .update_handler = update_handler,
     });
 }

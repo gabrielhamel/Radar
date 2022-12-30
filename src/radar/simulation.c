@@ -17,7 +17,7 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
         return false;
     }
     engine_t *engine = engine_get();
-    scene_append_system(scene, sprite_drawer_system_create(engine->window));
+    scene_append_system(scene, sprite_drawer_system_create());
     scene_append_system(scene, movement_system_create());
     LIST_FOREACH(entity, &def->entities, entry) {
         switch (entity->type) {

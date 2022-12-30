@@ -63,11 +63,24 @@ bool scene_subscribe_entity_to_system(scene_t *scene, entity_t *entity, system_t
     return true;
 }
 
-void scene_update_systems(scene_t *scene, sfTime *elapsed_time)
+void scene_systems_update(scene_t *scene, sfTime *elapsed_time)
 {
     entity_system_subscribe_link_t *it = NULL;
 
     LIST_FOREACH(it, &scene->entities_to_systems, entry) {
-        it->system->update_handler(it->entity, elapsed_time, it->system->update_context);
+        if (it->system->update_handler) {
+            it->system->update_handler(it->entity, elapsed_time, it->system->context);
+        }
+    }
+}
+
+void scene_systems_render(scene_t *scene, sfRenderWindow *window)
+{
+    entity_system_subscribe_link_t *it = NULL;
+
+    LIST_FOREACH(it, &scene->entities_to_systems, entry) {
+        if (it->system->render_handler) {
+            it->system->render_handler(it->entity, window, it->system->context);
+        }
     }
 }

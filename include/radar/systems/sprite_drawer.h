@@ -6,6 +6,6 @@
 
 #define SPRITE_DRAWER_SYSTEM_TYPE 1
 
-system_t *sprite_drawer_system_create(sfRenderWindow *window);
+system_t *sprite_drawer_system_create(void);
 
 #endif // RADAR_SPRITE_DRAWER_SYSTEM_H
