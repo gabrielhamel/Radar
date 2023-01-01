@@ -21,10 +21,13 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/simulation.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/aircraft.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/tower.c
+    ${PROJECT_SOURCE_DIR}/src/radar/entities/timer.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/position.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/speed.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/sprite.c
+    ${PROJECT_SOURCE_DIR}/src/radar/components/ui_link.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/sprite_drawer.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/timer.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/movement.c
     ${PROJECT_SOURCE_DIR}/src/engine/engine.c
     ${PROJECT_SOURCE_DIR}/src/engine/scene.c

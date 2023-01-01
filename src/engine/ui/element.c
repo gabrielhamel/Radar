@@ -57,6 +57,7 @@ void ui_element_render(ui_element_t *element, sfRenderTexture *parent_render)
 {
     struct ui_element_s *it = NULL;
 
+    sfRenderTexture_clear(element->render_target, sfBlack);
     sfRenderTexture_drawRectangleShape(element->render_target, element->background, NULL);
     if (element->text_ready) {
         sfRenderTexture_drawText(element->render_target, element->text, NULL);

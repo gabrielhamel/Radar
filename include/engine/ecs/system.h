@@ -23,6 +23,5 @@ typedef struct system_s {
 } system_t;
 
 system_t *system_create(system_type_t type, system_params_t params);
-bool system_subscribe_entity(system_t *system, entity_t *entity);
 
 #endif // SYSTEM_H
