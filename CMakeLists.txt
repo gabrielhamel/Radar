@@ -55,6 +55,7 @@ set(CSFML_MODULES
     graphics
     system
     window
+    audio
 )
 
 if(NOT CMAKE_BUILD_TYPE)

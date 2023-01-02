@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <SFML/Audio.h>
 #include "engine/engine.h"
 #include "radar/simulation.h"
 #include "radar/parser.h"
@@ -28,6 +28,14 @@ static void toogle_hitbox(bool *hitbox_enabled)
     *hitbox_enabled = !*hitbox_enabled;
 }
 
+static sfMusic *ambiance_init(void)
+{
+    sfMusic *music = sfMusic_createFromFile("assets/music.ogg");
+    sfMusic_setLoop(music, sfTrue);
+    sfMusic_play(music);
+    return music;
+}
+
 static events_handler_t *simulation_event_handler_create(bool *hitbox_enabled)
 {
     events_handler_t *eh = eh_create();
@@ -50,6 +58,8 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     if (def == NULL) {
         return false;
     }
+
+    ambiance_init();
 
     scene_append_system(scene, sprite_drawer_system_create());
     scene_append_system(scene, movement_system_create());
