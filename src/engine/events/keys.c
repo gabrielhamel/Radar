@@ -4,7 +4,7 @@
 
 void eh_bind_key_pressed(events_handler_t *handler, sfKeyCode key, void (*callback)(void *), void *context)
 {
-    struct eh_bind_s *bind = malloc(sizeof(eh_bind_t));
+    struct eh_key_bind_s *bind = malloc(sizeof(eh_key_bind_t));
 
     bind->key = key;
     bind->callback = callback;
@@ -14,7 +14,7 @@ void eh_bind_key_pressed(events_handler_t *handler, sfKeyCode key, void (*callba
 
 void eh_bind_key_released(events_handler_t *handler, sfKeyCode key, void (*callback)(void *), void *context)
 {
-    struct eh_bind_s *bind = malloc(sizeof(eh_bind_t));
+    struct eh_key_bind_s *bind = malloc(sizeof(eh_key_bind_t));
 
     bind->key = key;
     bind->callback = callback;

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "engine/engine.h"
 #include "radar/simulation.h"
 #include "radar/parser.h"
@@ -9,11 +11,15 @@
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
 #include "radar/entities/timer.h"
-#include "engine/text/unicode.h"
 
 static void close_window(sfRenderWindow *window)
 {
     sfRenderWindow_close(window);
+}
+
+static void show_click_pos(sfVector2i position, void *)
+{
+    printf("%d %d\n", position.x, position.y);
 }
 
 static events_handler_t *simulation_event_handler_create(void)
@@ -21,6 +27,7 @@ static events_handler_t *simulation_event_handler_create(void)
     events_handler_t *eh = eh_create();
 
     eh_bind_key_pressed(eh, sfKeyEscape, close_window, engine_get()->window);
+    eh_bind_mouse_pressed(eh, sfMouseLeft, show_click_pos, NULL);
     return eh;
 }
 
