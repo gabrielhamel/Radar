@@ -10,7 +10,8 @@ entity_t *tower_create_from_definition(radar_entity_definition_t *definition)
         definition->args[1]
     });
     component_t *sprite = sprite_component_create_from_file("./assets/tower.png", (sprite_params_t){
-            .position = COMPONENT_DATA(position, position_component_t)->position
+        .position = COMPONENT_DATA(position, position_component_t)->position,
+        .origin = CENTER,
     });
 
     entity_assign_component(tower, position);

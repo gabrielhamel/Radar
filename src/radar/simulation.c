@@ -4,6 +4,7 @@
 #include "radar/entities/aircraft.h"
 #include "radar/entities/tower.h"
 #include "radar/systems/sprite_drawer.h"
+#include "radar/components/sprite.h"
 #include "radar/systems/movement.h"
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
@@ -62,5 +63,17 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
                 break;
         }
     }
+
+    // Background sprite
+    entity_t *background = entity_create();
+    entity_assign_component(background, sprite_component_create_from_file("assets/background.png",
+                                                                          (sprite_params_t){
+                                                                                  .position = (sfVector2f){0},
+                                                                                  .origin = TOP_LEFT
+                                                                          }));
+
+    scene_append_entity(scene, background);
+    scene_subscribe_entity_to_system(scene, background, SPRITE_DRAWER_SYSTEM_TYPE);
+
     return true;
 }

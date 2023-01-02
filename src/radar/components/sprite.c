@@ -11,7 +11,9 @@ component_t *sprite_component_create_from_file(const char *filepath, sprite_para
 
     data->sprite = sfSprite_create();
     sfSprite_setTexture(data->sprite, texture, sfTrue);
-    sfSprite_setOrigin(data->sprite, (sfVector2f){ size.x / 2, size.y / 2 });
+    if (params.origin == CENTER) {
+        sfSprite_setOrigin(data->sprite, (sfVector2f) {size.x / 2, size.y / 2});
+    }
     sfSprite_setPosition(data->sprite, params.position);
     return component_create(SPRITE_COMPONENT_TYPE, data);
 }

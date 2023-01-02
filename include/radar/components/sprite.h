@@ -7,8 +7,14 @@
 
 #define SPRITE_COMPONENT_TYPE 3
 
+typedef enum {
+    TOP_LEFT,
+    CENTER,
+} sprite_origin_t;
+
 typedef struct {
     sfVector2f position;
+    sprite_origin_t origin;
 } sprite_params_t;
 
 typedef struct {

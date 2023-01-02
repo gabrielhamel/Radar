@@ -19,7 +19,8 @@ entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
         sin(angle) * (float)definition->args[4]
     });
     component_t *sprite = sprite_component_create_from_file("./assets/aircraft.png", (sprite_params_t){
-        .position = COMPONENT_DATA(position, position_component_t)->position
+        .position = COMPONENT_DATA(position, position_component_t)->position,
+        .origin = CENTER
     });
     sfSprite_setRotation(COMPONENT_DATA(sprite, sprite_component_t)->sprite, angle * 180.0 / M_PI);
 
