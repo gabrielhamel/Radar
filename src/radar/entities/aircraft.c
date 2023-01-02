@@ -5,8 +5,11 @@
 #include "radar/components/sprite.h"
 #include "radar/components/hitbox.h"
 #include "radar/entities/aircraft.h"
+#include "radar/systems/movement.h"
+#include "radar/systems/sprite_drawer.h"
+#include "radar/systems/hitbox.h"
 
-entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
+static entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
 {
     entity_t *aircraft = entity_create();
     component_t *position = position_component_create((sfVector2f){
@@ -35,4 +38,13 @@ entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
     entity_assign_component(aircraft, sprite);
     entity_assign_component(aircraft, hitbox);
     return aircraft;
+}
+
+void aircraft_scene_append(scene_t *scene, radar_entity_definition_t *definition)
+{
+    entity_t *aircraft = aircraft_create_from_definition(definition);
+    scene_append_entity(scene, aircraft);
+    scene_subscribe_entity_to_system(scene, aircraft, SPRITE_DRAWER_SYSTEM_TYPE);
+    scene_subscribe_entity_to_system(scene, aircraft, MOVEMENT_SYSTEM_TYPE);
+    scene_subscribe_entity_to_system(scene, aircraft, HITBOX_SYSTEM_TYPE);
 }

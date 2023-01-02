@@ -1,7 +1,7 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "engine/text/unicode.h"
+
 #include "radar/systems/timer.h"
 #include "radar/components/ui_link.h"
 

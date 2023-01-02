@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <SFML/Audio.h>
 #include "engine/engine.h"
 #include "radar/simulation.h"
@@ -13,21 +12,6 @@
 #include "radar/systems/timer.h"
 #include "radar/entities/timer.h"
 
-static void close_window(sfRenderWindow *window)
-{
-    sfRenderWindow_close(window);
-}
-
-static void show_click_pos(sfVector2i position, void *)
-{
-    printf("%d %d\n", position.x, position.y);
-}
-
-static void toogle_hitbox(bool *hitbox_enabled)
-{
-    *hitbox_enabled = !*hitbox_enabled;
-}
-
 static sfMusic *ambiance_init(void)
 {
     sfMusic *music = sfMusic_createFromFile("assets/music.ogg");
@@ -36,63 +20,8 @@ static sfMusic *ambiance_init(void)
     return music;
 }
 
-static events_handler_t *simulation_event_handler_create(bool *hitbox_enabled)
+static void simulation_load_background(scene_t *scene)
 {
-    events_handler_t *eh = eh_create();
-
-    eh_bind_key_pressed(eh, sfKeyEscape, close_window, engine_get()->window);
-    eh_bind_key_pressed(eh, sfKeyH, toogle_hitbox, hitbox_enabled);
-    eh_bind_mouse_pressed(eh, sfMouseLeft, show_click_pos, NULL);
-    return eh;
-}
-
-bool radar_init_from_script(scene_t *scene, const char *filepath)
-{
-    radar_definition_t *def = parser_read(filepath);
-    radar_entity_definition_t *entity;
-    entity_t *aircraft;
-    entity_t *tower;
-    entity_t *timer = ui_timer_create();
-    ui_element_t *timer_ui = entity_get_component(timer, UI_LINK_COMPONENT_TYPE);
-
-    if (def == NULL) {
-        return false;
-    }
-
-    ambiance_init();
-
-    scene_append_system(scene, sprite_drawer_system_create());
-    scene_append_system(scene, movement_system_create());
-    scene_append_system(scene, timer_system_create());
-    system_t *hitbox_system = hitbox_system_create();
-    scene_append_system(scene, hitbox_system);
-
-    scene_append_entity(scene, timer);
-
-    scene_subscribe_entity_to_system(scene, timer, TIMER_SYSTEM_TYPE);
-    scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system->context));
-
-    ui_element_append_children(scene_get_ui_root(scene), timer_ui);
-
-    LIST_FOREACH(entity, &def->entities, entry) {
-        switch (entity->type) {
-            case AIRCRAFT:
-                aircraft = aircraft_create_from_definition(entity);
-                scene_append_entity(scene, aircraft);
-                scene_subscribe_entity_to_system(scene, aircraft, SPRITE_DRAWER_SYSTEM_TYPE);
-                scene_subscribe_entity_to_system(scene, aircraft, MOVEMENT_SYSTEM_TYPE);
-                scene_subscribe_entity_to_system(scene, aircraft, HITBOX_SYSTEM_TYPE);
-                break;
-            case TOWER:
-                tower = tower_create_from_definition(entity);
-                scene_subscribe_entity_to_system(scene, tower, SPRITE_DRAWER_SYSTEM_TYPE);
-                scene_subscribe_entity_to_system(scene, tower, HITBOX_SYSTEM_TYPE);
-                scene_append_entity(scene, tower);
-                break;
-        }
-    }
-
-    // Background sprite
     entity_t *background = entity_create();
     entity_assign_component(background, sprite_component_create_from_file("assets/background.png",
                                                                           (sprite_params_t){
@@ -102,6 +31,43 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
 
     scene_append_entity(scene, background);
     scene_subscribe_entity_to_system(scene, background, SPRITE_DRAWER_SYSTEM_TYPE);
+}
 
+static void simulation_load_entities(scene_t *scene, const char *filepath)
+{
+    radar_entity_definition_t *entity;
+    radar_definition_t *def = parser_read(filepath);
+
+    LIST_FOREACH(entity, &def->entities, entry) {
+        switch (entity->type) {
+            case AIRCRAFT:
+                aircraft_scene_append(scene, entity);
+                break;
+            case TOWER:
+                tower_scene_append(scene, entity);
+                break;
+        }
+    }
+}
+
+bool radar_init_from_script(scene_t *scene, const char *filepath)
+{
+    entity_t *timer = ui_timer_create();
+    ui_element_t *timer_ui = entity_get_component(timer, UI_LINK_COMPONENT_TYPE);
+
+    ambiance_init();
+
+    scene_append_system(scene, sprite_drawer_system_create());
+    scene_append_system(scene, movement_system_create());
+    scene_append_system(scene, timer_system_create());
+
+    system_t *hitbox_system = hitbox_system_create();
+    scene_append_system(scene, hitbox_system);
+    scene_append_entity(scene, timer);
+    scene_subscribe_entity_to_system(scene, timer, TIMER_SYSTEM_TYPE);
+    scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system->context));
+    ui_element_append_children(scene_get_ui_root(scene), timer_ui);
+    simulation_load_entities(scene, filepath);
+    simulation_load_background(scene);
     return true;
 }

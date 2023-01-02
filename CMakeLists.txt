@@ -19,6 +19,7 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/main.c
     ${PROJECT_SOURCE_DIR}/src/radar/parser.c
     ${PROJECT_SOURCE_DIR}/src/radar/simulation.c
+    ${PROJECT_SOURCE_DIR}/src/radar/events/simulation.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/aircraft.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/tower.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/timer.c
