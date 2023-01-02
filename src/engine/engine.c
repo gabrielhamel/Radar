@@ -74,8 +74,8 @@ void engine_run(engine_t *engine)
         scene_systems_update(engine->scene, &engine->elapsed_time);
         ui_element_update(engine->scene->ui_element_root, &engine->elapsed_time);
         sfRenderWindow_clear(engine->window, sfWhite);
-        scene_ui_render(engine->scene, engine->window);
         scene_systems_render(engine->scene, engine->window);
+        scene_ui_render(engine->scene, engine->window);
         sfRenderWindow_display(engine->window);
     }
 }

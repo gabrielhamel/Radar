@@ -8,6 +8,7 @@
 #include "radar/systems/sprite_drawer.h"
 #include "radar/components/sprite.h"
 #include "radar/systems/movement.h"
+#include "radar/systems/hitbox.h"
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
 #include "radar/entities/timer.h"
@@ -22,11 +23,17 @@ static void show_click_pos(sfVector2i position, void *)
     printf("%d %d\n", position.x, position.y);
 }
 
-static events_handler_t *simulation_event_handler_create(void)
+static void toogle_hitbox(bool *hitbox_enabled)
+{
+    *hitbox_enabled = !*hitbox_enabled;
+}
+
+static events_handler_t *simulation_event_handler_create(bool *hitbox_enabled)
 {
     events_handler_t *eh = eh_create();
 
     eh_bind_key_pressed(eh, sfKeyEscape, close_window, engine_get()->window);
+    eh_bind_key_pressed(eh, sfKeyH, toogle_hitbox, hitbox_enabled);
     eh_bind_mouse_pressed(eh, sfMouseLeft, show_click_pos, NULL);
     return eh;
 }
@@ -47,11 +54,13 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     scene_append_system(scene, sprite_drawer_system_create());
     scene_append_system(scene, movement_system_create());
     scene_append_system(scene, timer_system_create());
+    system_t *hitbox_system = hitbox_system_create();
+    scene_append_system(scene, hitbox_system);
 
     scene_append_entity(scene, timer);
 
     scene_subscribe_entity_to_system(scene, timer, TIMER_SYSTEM_TYPE);
-    scene_subscribe_event_handler(scene, simulation_event_handler_create());
+    scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system->context));
 
     ui_element_append_children(scene_get_ui_root(scene), timer_ui);
 
@@ -62,10 +71,12 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
                 scene_append_entity(scene, aircraft);
                 scene_subscribe_entity_to_system(scene, aircraft, SPRITE_DRAWER_SYSTEM_TYPE);
                 scene_subscribe_entity_to_system(scene, aircraft, MOVEMENT_SYSTEM_TYPE);
+                scene_subscribe_entity_to_system(scene, aircraft, HITBOX_SYSTEM_TYPE);
                 break;
             case TOWER:
                 tower = tower_create_from_definition(entity);
                 scene_subscribe_entity_to_system(scene, tower, SPRITE_DRAWER_SYSTEM_TYPE);
+                scene_subscribe_entity_to_system(scene, tower, HITBOX_SYSTEM_TYPE);
                 scene_append_entity(scene, tower);
                 break;
         }
