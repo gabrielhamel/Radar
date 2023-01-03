@@ -9,21 +9,21 @@ static const entity_filter_t entity_filters[]  = {
     {TOWER, 3}
 };
 
-static const entity_filter_t *parser_find_entity_type(char *token, size_t *line_nb)
+static entity_filter_t *parser_find_entity_type(char *token, size_t *line_nb)
 {
-    const entity_filter_t *entity_filter;
+    entity_filter_t *entity_filter;
 
     if (strlen(token) > 2) {
-        fprintf(stderr, "Line %ld: Invalid entity type format\n", *line_nb);
+        fprintf(stderr, "Line %zd: Invalid entity type format\n", *line_nb);
         return NULL;
     }
     for (size_t idx = 0; idx < ARRAY_LENGTH(entity_filters); idx++) {
         if (token[0] == entity_filters[idx].type) {
-            entity_filter = &entity_filters[idx];
+            entity_filter = (entity_filter_t *)&entity_filters[idx];
         }
     }
     if (entity_filter == NULL) {
-        fprintf(stderr, "Line %ld: Unknown entity type\n", *line_nb);
+        fprintf(stderr, "Line %zd: Unknown entity type\n", *line_nb);
         return NULL;
     }
     return entity_filter;
@@ -41,14 +41,14 @@ static unsigned int *parser_get_args(entity_filter_t *entity_filter, size_t *lin
             break;
         }
         if (arg_index >= entity_filter->number_of_params) {
-            fprintf(stderr, "Line %ld: Too many arguments\n", *line_nb);
+            fprintf(stderr, "Line %zd: Too many arguments\n", *line_nb);
             free(args);
             return NULL;
         }
         args[arg_index++] = atoi(token);
     } while (token);
     if (arg_index != entity_filter->number_of_params) {
-        fprintf(stderr, "Line %ld: Too few arguments\n", *line_nb);
+        fprintf(stderr, "Line %zd: Too few arguments\n", *line_nb);
         free(args);
         return NULL;
     }
@@ -57,16 +57,19 @@ static unsigned int *parser_get_args(entity_filter_t *entity_filter, size_t *lin
 
 static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_nb)
 {
-    char *line = NULL;
+    char line[4096] = {0};
     char *token = NULL;
-    ssize_t read_length = getline(&line, &read_length, file);
+    char *readed = NULL;
+
+    readed = fgets(line, 4096, file);
+
     entity_filter_t *entity_filter = NULL;
     unsigned int *args;
     radar_entity_definition_t *def;
 
-    if (read_length < 1) {
+    if (readed == NULL) {
         return NULL;
-    } else if (read_length == 1) {
+    } else if (strlen(readed) == 1) {
         (*line_nb)++;
         return parser_parse_entity(file, line_nb);
     }
@@ -81,7 +84,6 @@ static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_n
         free(line);
         return NULL;
     }
-    free(line);
     def = malloc(sizeof(radar_entity_definition_t));
     def->type = entity_filter->type;
     def->args = args;

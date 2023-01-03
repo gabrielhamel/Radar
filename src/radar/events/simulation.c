@@ -7,7 +7,7 @@ static void close_window(sfRenderWindow *window)
     sfRenderWindow_close(window);
 }
 
-static void show_click_pos(sfVector2i position, void *)
+static void show_click_pos(sfVector2i position, void *context)
 {
     printf("%d %d\n", position.x, position.y);
 }

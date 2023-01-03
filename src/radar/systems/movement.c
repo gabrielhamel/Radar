@@ -4,7 +4,7 @@
 #include "radar/components/hitbox.h"
 #include "radar/components/sprite.h"
 
-static void update_handler(entity_t *entity, sfTime *elapsed_time, void *)
+static void update_handler(entity_t *entity, sfTime *elapsed_time, void *context)
 {
     position_component_t *position_c = entity_get_component(entity, POSITION_COMPONENT_TYPE);
     speed_component_t *speed_c = entity_get_component(entity, SPEED_COMPONENT_TYPE);

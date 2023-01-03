@@ -128,4 +128,6 @@ foreach(MODULE ${CSFML_MODULES})
     )
 endforeach(MODULE)
 
-target_link_libraries(${BINARY_NAME} m)
+if (NOT ${WIN32})
+    target_link_libraries(${BINARY_NAME} m)
+endif()
