@@ -124,6 +124,10 @@ struct {								\
 	for ((var) = ((head)->lh_first);				\
 		(var);							\
 		(var) = ((var)->field.le_next))
+#define LIST_FOREACH_SAFE(var, head, field, tvar)          \
+        for ((var) = LIST_FIRST((head));                   \
+            (var) && ((tvar) = LIST_NEXT((var), field), 1);\
+            (var) = (tvar))
 /*
  * List access methods.
  */
@@ -377,6 +381,10 @@ struct {								\
 	for ((var) = ((head)->tqh_first);				\
 		(var);							\
 		(var) = ((var)->field.tqe_next))
+#define TAILQ_FOREACH_SAFE(var, head, field, tvar)       \
+    for ((var) = TAILQ_FIRST((head));                    \
+        (var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
+        (var) = (tvar))
 #define	TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
 	for ((var) = (*(((struct headname *)((head)->tqh_last))->tqh_last));	\
 		(var);							\

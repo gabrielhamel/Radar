@@ -5,7 +5,7 @@
 #include "component.h"
 
 typedef struct entity_s {
-    LIST_ENTRY(entity_s) entry;
+    TAILQ_ENTRY(entity_s) entry;
     LIST_HEAD(, component_s) components;
 } entity_t;
 

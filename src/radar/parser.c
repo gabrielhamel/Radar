@@ -90,28 +90,25 @@ static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_n
 
 radar_definition_t *parser_read(const char *filename)
 {
-    LIST_HEAD(, radar_entity_definition_s) entities;
+    radar_definition_t *radar = malloc(sizeof(radar_definition_t));
     FILE *file = fopen(filename, "r");
     size_t line_idx = 1;
     radar_entity_definition_t *entity;
-    radar_definition_t *radar;
 
     if (file == NULL) {
         fprintf(stderr, "\"%s\": ", filename);
         perror(NULL);
         return NULL;
     }
-    LIST_INIT(&entities);
+    LIST_INIT(&radar->entities);
     do {
         entity = parser_parse_entity(file, &line_idx);
         if (entity == NULL) {
             break;
         }
-        LIST_INSERT_HEAD(&entities, entity, entry);
+        LIST_INSERT_HEAD(&radar->entities, entity, entry);
         line_idx++;
     } while (entity);
     fclose(file);
-    radar = malloc(sizeof(radar_definition_t));
-    radar->entities.lh_first = entities.lh_first;
     return radar;
 }
