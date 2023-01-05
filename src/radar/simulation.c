@@ -17,7 +17,7 @@ static sfMusic *ambiance_init(void)
     sfMusic *music = sfMusic_createFromFile("assets/music.ogg");
     sfMusic_setLoop(music, sfTrue);
     sfMusic_play(music);
-    sfMusic_setVolume(music, 0.5);
+    sfMusic_setVolume(music, 35);
     return music;
 }
 
