@@ -7,7 +7,7 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
 {
     ui_element_t *elem = malloc(sizeof(ui_element_t));
 
-    LIST_INIT(&elem->children);
+    TAILQ_INIT(&elem->children);
     elem->render_target = sfRenderTexture_createWithSettings(renderRectangle.width, renderRectangle.height, NULL);
     elem->render_texture = (sfTexture *)sfRenderTexture_getTexture(elem->render_target);
     elem->render_sprite = sfSprite_create();
@@ -35,7 +35,7 @@ void ui_element_append_children(ui_element_t *parent, ui_element_t *child)
 
     child->absolute_bounds = (sfIntRect){ parent_bounds.left + child_pos.x, parent_bounds.top + child_pos.y,
                                           child->absolute_bounds.width, child->absolute_bounds.height };
-    LIST_INSERT_HEAD(&parent->children, child, entry);
+    TAILQ_INSERT_HEAD(&parent->children, child, entry);
 }
 
 void ui_element_set_background_color(ui_element_t *element, sfColor color)
@@ -62,7 +62,7 @@ void ui_element_render(ui_element_t *element, sfRenderTexture *parent_render)
     if (element->text_ready) {
         sfRenderTexture_drawText(element->render_target, element->text, NULL);
     }
-    LIST_FOREACH(it, &element->children, entry) {
+    TAILQ_FOREACH(it, &element->children, entry) {
         ui_element_render(it, element->render_target);
     }
     sfRenderTexture_display(element->render_target);
@@ -99,7 +99,7 @@ void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
             element->click_event->leave(element->click_event->context);
         }
     }
-    LIST_FOREACH(it, &element->children, entry) {
+    TAILQ_FOREACH(it, &element->children, entry) {
         ui_element_update(it, elapsed_time);
     }
 }

@@ -6,10 +6,10 @@ events_handler_t *eh_create(void)
 {
     events_handler_t *handler = malloc(sizeof(events_handler_t));
 
-    LIST_INIT(&handler->key_pressed_binds);
-    LIST_INIT(&handler->key_released_binds);
-    LIST_INIT(&handler->mouse_pressed_binds);
-    LIST_INIT(&handler->mouse_released_binds);
+    TAILQ_INIT(&handler->key_pressed_binds);
+    TAILQ_INIT(&handler->key_released_binds);
+    TAILQ_INIT(&handler->mouse_pressed_binds);
+    TAILQ_INIT(&handler->mouse_released_binds);
     return handler;
 }
 
@@ -20,21 +20,21 @@ void eh_handle_event(events_handler_t *handler, sfEvent *event)
 
     switch (event->type) {
         case sfEvtKeyPressed:
-            LIST_FOREACH(it_key, &handler->key_pressed_binds, entry) {
+            TAILQ_FOREACH(it_key, &handler->key_pressed_binds, entry) {
                 if (event->key.code == it_key->key) {
                     it_key->callback(it_key->context);
                 }
             }
             break;
         case sfEvtKeyReleased:
-            LIST_FOREACH(it_key, &handler->key_released_binds, entry) {
+            TAILQ_FOREACH(it_key, &handler->key_released_binds, entry) {
                 if (event->key.code == it_key->key) {
                     it_key->callback(it_key->context);
                 }
             }
             break;
         case sfEvtMouseButtonPressed:
-            LIST_FOREACH(it_mouse, &handler->mouse_pressed_binds, entry) {
+            TAILQ_FOREACH(it_mouse, &handler->mouse_pressed_binds, entry) {
                 if (event->mouseButton.button == it_mouse->button) {
                     it_mouse->callback((sfVector2i){
                         event->mouseButton.x,
@@ -44,7 +44,7 @@ void eh_handle_event(events_handler_t *handler, sfEvent *event)
             }
             break;
         case sfEvtMouseButtonReleased:
-            LIST_FOREACH(it_mouse, &handler->mouse_released_binds, entry) {
+            TAILQ_FOREACH(it_mouse, &handler->mouse_released_binds, entry) {
                 if (event->mouseButton.button == it_mouse->button) {
                     it_mouse->callback((sfVector2i){
                             event->mouseButton.x,

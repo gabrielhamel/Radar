@@ -17,6 +17,7 @@ static sfMusic *ambiance_init(void)
     sfMusic *music = sfMusic_createFromFile("assets/music.ogg");
     sfMusic_setLoop(music, sfTrue);
     sfMusic_play(music);
+    sfMusic_setVolume(music, 0.5);
     return music;
 }
 
@@ -30,7 +31,7 @@ static void simulation_load_background(scene_t *scene)
                                                                           }));
 
     scene_append_entity(scene, background);
-    scene_subscribe_entity_to_system(scene, background, SPRITE_DRAWER_SYSTEM_TYPE);
+    system_subscribe_entity(scene_get_system(scene, SPRITE_DRAWER_SYSTEM_TYPE), background);
 }
 
 static radar_definition_t *simulation_load_entities(scene_t *scene, const char *filepath)
@@ -39,11 +40,13 @@ static radar_definition_t *simulation_load_entities(scene_t *scene, const char *
     radar_entity_definition_t *entity_tmp = NULL;
     radar_definition_t *def = parser_read(filepath);
 
-    LIST_FOREACH_SAFE(entity, &def->entities, entry, entity_tmp) {
+    TAILQ_FOREACH_SAFE(entity, &def->entities, entry, entity_tmp) {
         switch (entity->type) {
             case TOWER:
                 tower_scene_append(scene, entity);
-                LIST_REMOVE(entity, entry);
+                TAILQ_REMOVE(&def->entities, entity, entry);
+                break;
+            default:
                 break;
         }
     }
@@ -55,22 +58,27 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     entity_t *timer = ui_timer_create();
     ui_element_t *timer_ui = entity_get_component(timer, UI_LINK_COMPONENT_TYPE);
 
+    system_t *hitbox_system = hitbox_system_create();
+    scene_append_system(scene, hitbox_system);
+
     scene_append_system(scene, sprite_drawer_system_create());
+
+    simulation_load_background(scene);
+
     scene_append_system(scene, movement_system_create());
+
     system_t *timer_system = timer_system_create();
     scene_append_system(scene, timer_system);
 
-    system_t *hitbox_system = hitbox_system_create();
-    scene_append_system(scene, hitbox_system);
     scene_append_entity(scene, timer);
-    scene_subscribe_entity_to_system(scene, timer, TIMER_SYSTEM_TYPE);
+    system_subscribe_entity(timer_system, timer);
+
     scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system->context));
     ui_element_append_children(scene_get_ui_root(scene), timer_ui);
-    simulation_load_background(scene);
     radar_definition_t *def = simulation_load_entities(scene, filepath);
     scene_append_system(scene, simulation_system_create(scene, timer_system->context, def));
     entity_t *simulation = entity_create();
-    scene_subscribe_entity_to_system(scene, simulation, SIMULATION_SYSTEM_TYPE);
+    system_subscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), simulation);
 
     ambiance_init();
     return true;

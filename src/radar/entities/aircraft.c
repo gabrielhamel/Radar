@@ -56,8 +56,9 @@ void aircraft_scene_append(scene_t *scene, radar_entity_definition_t *definition
 {
     entity_t *aircraft = aircraft_create_from_definition(definition);
     scene_append_entity(scene, aircraft);
-    scene_subscribe_entity_to_system(scene, aircraft, SPRITE_DRAWER_SYSTEM_TYPE);
-    scene_subscribe_entity_to_system(scene, aircraft, MOVEMENT_SYSTEM_TYPE);
-    scene_subscribe_entity_to_system(scene, aircraft, HITBOX_SYSTEM_TYPE);
-    scene_subscribe_entity_to_system(scene, aircraft, SIMULATION_SYSTEM_TYPE);
+
+    system_subscribe_entity(scene_get_system(scene, SPRITE_DRAWER_SYSTEM_TYPE), aircraft);
+    system_subscribe_entity(scene_get_system(scene, MOVEMENT_SYSTEM_TYPE), aircraft);
+    system_subscribe_entity(scene_get_system(scene, HITBOX_SYSTEM_TYPE), aircraft);
+    system_subscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), aircraft);
 }

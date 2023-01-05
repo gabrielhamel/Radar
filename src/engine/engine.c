@@ -26,7 +26,9 @@ static sfRenderWindow *engine_window_create(engine_params_t params)
         return NULL;
 #endif
     }
-    window = sfRenderWindow_createUnicode(mode, params.title, sfTitlebar | sfClose, NULL);
+    sfContextSettings settings = sfContext_getSettings(sfContextDefault);
+    settings.antialiasingLevel = 16;
+    window = sfRenderWindow_createUnicode(mode, params.title, sfTitlebar | sfClose, &settings);
     if (window == NULL) {
         perror("Cannot open the required window");
         return NULL;

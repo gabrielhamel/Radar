@@ -6,23 +6,28 @@
 #include "radar/entities/aircraft.h"
 #include "radar/components/ttl.h"
 
-static void update_handler(entity_t *entity, sfTime *elapsed_time, simulation_system_t *simulation)
+static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    radar_entity_definition_t *aircraft = NULL;
-    radar_entity_definition_t *aircraft_tmp = NULL;
+    simulation_system_t *simulation = system->context;
+    entity_link_t *entity_link = NULL;
+    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
+        entity_t *entity = entity_link->entity;
 
-    LIST_FOREACH_SAFE(aircraft, &simulation->def->entities, entry, aircraft_tmp) {
-        if (sfTime_asSeconds(*simulation->timer) >= aircraft->args[5]) {
-            aircraft_scene_append(simulation->scene, aircraft);
-            LIST_REMOVE(aircraft, entry);
+        radar_entity_definition_t *aircraft = NULL;
+        radar_entity_definition_t *aircraft_tmp = NULL;
+        TAILQ_FOREACH_SAFE(aircraft, &simulation->def->entities, entry, aircraft_tmp) {
+            if (sfTime_asSeconds(*simulation->timer) >= aircraft->args[5]) {
+                aircraft_scene_append(simulation->scene, aircraft);
+                TAILQ_REMOVE(&simulation->def->entities, aircraft, entry);
+            }
         }
-    }
-    // Kill aircraft that are already reach their destination
-    float *ttl = entity_get_component(entity, TTL_COMPONENT_TYPE);
-    if (ttl) {
-        *ttl -= sfTime_asSeconds(*elapsed_time);
-        if (*ttl <= 0) {
-            scene_remove_entity(simulation->scene, entity);
+        // Kill aircraft that are already reach their destination
+        float *ttl = entity_get_component(entity, TTL_COMPONENT_TYPE);
+        if (ttl) {
+            *ttl -= sfTime_asSeconds(*elapsed_time);
+            if (*ttl <= 0) {
+                scene_remove_entity(simulation->scene, entity);
+            }
         }
     }
 }

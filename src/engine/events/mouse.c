@@ -10,7 +10,7 @@ void eh_bind_mouse_pressed(events_handler_t *handler, sfMouseButton button,
     bind->button = button;
     bind->callback = callback;
     bind->context = context;
-    LIST_INSERT_HEAD(&handler->mouse_pressed_binds, bind, entry);
+    TAILQ_INSERT_TAIL(&handler->mouse_pressed_binds, bind, entry);
 }
 
 void eh_bind_mouse_released(events_handler_t *handler, sfMouseButton button,
@@ -21,5 +21,5 @@ void eh_bind_mouse_released(events_handler_t *handler, sfMouseButton button,
     bind->button = button;
     bind->callback = callback;
     bind->context = context;
-    LIST_INSERT_HEAD(&handler->mouse_released_binds, bind, entry);
+    TAILQ_INSERT_TAIL(&handler->mouse_released_binds, bind, entry);
 }

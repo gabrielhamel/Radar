@@ -5,29 +5,35 @@
 #include "radar/systems/timer.h"
 #include "radar/components/ui_link.h"
 
-static void update_handler(entity_t *entity, sfTime *elapsed_time, sfTime *total_time)
+static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    ui_element_t *timer_ui = entity_get_component(entity, UI_LINK_COMPONENT_TYPE);
+    entity_link_t *entity_link = NULL;
+    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
+        entity_t *entity = entity_link->entity;
 
-    total_time->microseconds += elapsed_time->microseconds;
+        sfTime *total_time = system->context;
+        ui_element_t *timer_ui = entity_get_component(entity, UI_LINK_COMPONENT_TYPE);
 
-    unsigned int hours = total_time->microseconds / 3600000000;
-    unsigned int minutes = total_time->microseconds % 3600000000 / 60000000;
-    unsigned int seconds = total_time->microseconds % 3600000000 % 60000000 / 1000000;
+        total_time->microseconds += elapsed_time->microseconds;
 
-    sfUint32 text[] = {
-    '0' + hours / 10,
-    '0' + hours % 10,
-    ':',
-    '0' + minutes / 10,
-    '0' + minutes % 10,
-    ':',
-    '0' + seconds / 10,
-    '0' + seconds % 10,
-    '\0'
-    };
+        unsigned int hours = total_time->microseconds / 3600000000;
+        unsigned int minutes = total_time->microseconds % 3600000000 / 60000000;
+        unsigned int seconds = total_time->microseconds % 3600000000 % 60000000 / 1000000;
 
-    ui_element_set_text(timer_ui, text);
+        sfUint32 text[] = {
+                '0' + hours / 10,
+                '0' + hours % 10,
+                ':',
+                '0' + minutes / 10,
+                '0' + minutes % 10,
+                ':',
+                '0' + seconds / 10,
+                '0' + seconds % 10,
+                '\0'
+        };
+
+         ui_element_set_text(timer_ui, text);
+    }
 }
 
 system_t *timer_system_create(void)

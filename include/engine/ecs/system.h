@@ -8,20 +8,23 @@
 
 typedef int system_type_t;
 
-typedef struct {
-    void *context;
-    void (*update_handler)(entity_t *, sfTime *, void *);
-    void (*render_handler)(entity_t *, sfRenderWindow *, void *);
-} system_params_t;
-
 typedef struct system_s {
-    LIST_ENTRY(system_s) entry;
+    TAILQ_ENTRY(system_s) entry;
     system_type_t type;
     void *context;
-    void (*update_handler)(entity_t *, sfTime *, void *);
-    void (*render_handler)(entity_t *, sfRenderWindow *, void *);
+    void (*update_handler)(struct system_s *, sfTime *);
+    void (*render_handler)(struct system_s *, sfRenderWindow *);
+    TAILQ_HEAD(, entity_link_s) entities_subscribed;
 } system_t;
 
+typedef struct {
+    void *context;
+    void (*update_handler)(struct system_s *, sfTime *);
+    void (*render_handler)(struct system_s *, sfRenderWindow *);
+} system_params_t;
+
 system_t *system_create(system_type_t type, system_params_t params);
+bool system_subscribe_entity(system_t *system, entity_t *entity);
+bool system_unsubscribe_entity(system_t *system, entity_t *entity);
 
 #endif // SYSTEM_H

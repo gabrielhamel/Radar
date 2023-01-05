@@ -102,13 +102,13 @@ radar_definition_t *parser_read(const char *filename)
         perror(NULL);
         return NULL;
     }
-    LIST_INIT(&radar->entities);
+    TAILQ_INIT(&radar->entities);
     do {
         entity = parser_parse_entity(file, &line_idx);
         if (entity == NULL) {
             break;
         }
-        LIST_INSERT_HEAD(&radar->entities, entity, entry);
+        TAILQ_INSERT_HEAD(&radar->entities, entity, entry);
         line_idx++;
     } while (entity);
     fclose(file);

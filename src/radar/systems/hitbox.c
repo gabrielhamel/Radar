@@ -3,18 +3,22 @@
 #include "radar/systems/hitbox.h"
 #include "radar/components/hitbox.h"
 
-static void render_handler(entity_t *entity, sfRenderWindow *window, bool *enabled)
+static void render_handler(system_t *system, sfRenderWindow *window)
 {
-    if (!*enabled) {
+    if (!*((bool *)system->context)) {
         return;
     }
 
-    hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE);
-
-    if (hitbox->type == CIRCLE) {
-        sfRenderWindow_drawCircleShape(window, hitbox->csfml_object, NULL);
-    } else if (hitbox->type == RECT) {
-        sfRenderWindow_drawRectangleShape(window, hitbox->csfml_object, NULL);
+    entity_link_t *entity_link = NULL;
+    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
+        entity_t *entity = entity_link->entity;
+        
+        hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE);
+        if (hitbox->type == CIRCLE) {
+            sfRenderWindow_drawCircleShape(window, hitbox->csfml_object, NULL);
+        } else if (hitbox->type == RECT) {
+            sfRenderWindow_drawRectangleShape(window, hitbox->csfml_object, NULL);
+        }
     }
 }
 

@@ -8,7 +8,7 @@
 typedef int component_type_t;
 
 typedef struct component_s {
-    LIST_ENTRY(component_s) entry;
+    TAILQ_ENTRY(component_s) entry;
     component_type_t type;
     void *data;
 } component_t;

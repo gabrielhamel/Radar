@@ -30,7 +30,8 @@ static entity_t *tower_create_from_definition(radar_entity_definition_t *definit
 void tower_scene_append(scene_t *scene, radar_entity_definition_t *definition)
 {
     entity_t *tower = tower_create_from_definition(definition);
-    scene_subscribe_entity_to_system(scene, tower, SPRITE_DRAWER_SYSTEM_TYPE);
-    scene_subscribe_entity_to_system(scene, tower, HITBOX_SYSTEM_TYPE);
+
+    system_subscribe_entity(scene_get_system(scene, SPRITE_DRAWER_SYSTEM_TYPE), tower);
+    system_subscribe_entity(scene_get_system(scene, HITBOX_SYSTEM_TYPE), tower);
     scene_append_entity(scene, tower);
 }

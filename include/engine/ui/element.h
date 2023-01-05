@@ -9,8 +9,8 @@
 #include "events.h"
 
 typedef struct ui_element_s {
-    LIST_ENTRY(ui_element_s) entry;
-    LIST_HEAD(, ui_element_s) children;
+    TAILQ_ENTRY(ui_element_s) entry;
+    TAILQ_HEAD(, ui_element_s) children;
     sfRenderTexture *render_target;
     sfTexture *render_texture;
     sfSprite *render_sprite;
