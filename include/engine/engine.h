@@ -4,7 +4,7 @@
 #include <SFML/Graphics.h>
 #include <stdbool.h>
 
-#include "scene.h"
+#include "ecs/scene.h"
 #include "events.h"
 
 typedef struct {

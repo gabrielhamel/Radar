@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/scene.h"
+#include "engine/ecs/scene.h"
 #include "engine/engine.h"
 
 scene_t *scene_create(void)

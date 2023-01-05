@@ -1,9 +1,9 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "ui/element.h"
-#include "ecs/entity.h"
-#include "ecs/system.h"
+#include "engine/ui/element.h"
+#include "engine/ecs/entity.h"
+#include "engine/ecs/system.h"
 
 typedef struct {
     TAILQ_HEAD(, entity_s) entities;
