@@ -1,5 +1,9 @@
 # Radar
 
+Simulation definition stored into assets/game.rdr
+
+![](medias/demo.png)
+
 ### Windows
 
 **Needs:**
