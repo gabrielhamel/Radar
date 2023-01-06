@@ -6,19 +6,19 @@
 #include "radar/systems/sprite_drawer.h"
 #include "radar/systems/simulation.h"
 #include "radar/components/sprite.h"
+#include "radar/components/music.h"
 #include "radar/systems/movement.h"
 #include "radar/systems/hitbox.h"
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
 #include "radar/entities/timer.h"
 
-static sfMusic *ambiance_init(void)
+static void ambiance_init(scene_t *scene)
 {
-    sfMusic *music = sfMusic_createFromFile("assets/music.ogg");
-    sfMusic_setLoop(music, sfTrue);
-    sfMusic_play(music);
-    sfMusic_setVolume(music, 35);
-    return music;
+    component_t *component = music_component_create_from_path("assets/music.ogg");
+    entity_t *music = entity_create();
+    entity_assign_component(music, component);
+    scene_append_entity(scene, music);
 }
 
 static void simulation_load_background(scene_t *scene)
@@ -80,6 +80,6 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     entity_t *simulation = entity_create();
     system_subscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), simulation);
 
-    ambiance_init();
+    ambiance_init(scene);
     return true;
 }

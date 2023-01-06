@@ -29,6 +29,7 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/components/ui_link.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/hitbox.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/ttl.c
+    ${PROJECT_SOURCE_DIR}/src/radar/components/music.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/sprite_drawer.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/simulation.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/timer.c
