@@ -22,8 +22,11 @@ static entity_t *aircraft_create_from_definition(radar_entity_definition_t *defi
         definition->args[0],
         definition->args[1]
     });
-    float angle = atan(((float)definition->args[3] - (float)definition->args[1]) /
-            ((float)definition->args[2] - (float)definition->args[0]));
+    sfVector2f vector = {
+        .x = (float)definition->args[2] - (float)definition->args[0],
+        .y = (float)definition->args[3] - (float)definition->args[1]
+    };
+    float angle = atan(vector.y / vector.x) + (vector.x < 0 ? M_PI : 0);
     component_t *speed = speed_component_create((sfVector2f){
         cos(angle) * (float)definition->args[4],
         sin(angle) * (float)definition->args[4]
@@ -37,9 +40,12 @@ static entity_t *aircraft_create_from_definition(radar_entity_definition_t *defi
         definition->args[1]
     });
 
-    float alive_time = ((float)definition->args[2] - (float)definition->args[0]) /
+    float alive_time = vector.x /
             COMPONENT_DATA(speed, speed_component_t)->speed.x;
-
+    if (alive_time == 0) {
+        alive_time = vector.y /
+        COMPONENT_DATA(speed, speed_component_t)->speed.y;
+    }
     component_t *ttl = ttl_component_create(alive_time);
 
     sfSprite_setRotation(COMPONENT_DATA(sprite, sprite_component_t)->sprite, angle * 180.0 / M_PI);

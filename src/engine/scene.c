@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "engine/ecs/scene.h"
 #include "engine/engine.h"
+#include "engine/ecs/scene.h"
 
 scene_t *scene_create(void)
 {
@@ -18,6 +18,11 @@ scene_t *scene_create(void)
         window_size.y
     });
     return scene;
+}
+
+scene_t *scene_get(void)
+{
+    return engine_get()->scene;
 }
 
 void scene_append_entity(scene_t *scene, entity_t *entity)

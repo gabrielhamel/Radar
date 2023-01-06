@@ -13,6 +13,7 @@ typedef struct {
 } scene_t;
 
 scene_t *scene_create(void);
+scene_t *scene_get(void);
 void scene_append_entity(scene_t *scene, entity_t *entity);
 void scene_remove_entity(scene_t *scene, entity_t *entity);
 bool scene_append_system(scene_t *scene, system_t *system);
