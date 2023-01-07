@@ -22,6 +22,7 @@ events_handler_t *simulation_event_handler_create(bool *hitbox_enabled)
     events_handler_t *eh = eh_create();
 
     eh_bind_key_pressed(eh, sfKeyEscape, (void (*)(void *))close_window, engine_get()->window);
+    eh_bind_window_closed(eh, (void (*)(void *))close_window, engine_get()->window);
     eh_bind_key_pressed(eh, sfKeyH, (void (*)(void *))toogle_hitbox, hitbox_enabled);
     eh_bind_mouse_pressed(eh, sfMouseLeft, show_click_pos, NULL);
     return eh;
