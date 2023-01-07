@@ -35,6 +35,7 @@ typedef struct events_handler_s {
 } events_handler_t;
 
 events_handler_t *eh_create(void);
+void eh_destroy(events_handler_t *handler);
 void eh_handle_event(events_handler_t *handler, sfEvent *event);
 void eh_bind_key_pressed(events_handler_t *handler, sfKeyCode key, void (*callback)(void *), void *context);
 void eh_bind_key_released(events_handler_t *handler, sfKeyCode key, void (*callback)(void *), void *context);
@@ -48,5 +49,10 @@ void eh_exec_mouse_released(events_handler_t *handler, sfEvent *event);
 void eh_exec_key_pressed(events_handler_t *handler, sfEvent *event);
 void eh_exec_key_released(events_handler_t *handler, sfEvent *event);
 void eh_exec_window_closed(events_handler_t *handler, sfEvent *event);
+void eh_unbind_window_closed(events_handler_t *handler);
+void eh_unbind_mouse_pressed(events_handler_t *handler);
+void eh_unbind_mouse_released(events_handler_t *handler);
+void eh_unbind_key_pressed(events_handler_t *handler);
+void eh_unbind_key_released(events_handler_t *handler);
 
 #endif // EVENTS_H

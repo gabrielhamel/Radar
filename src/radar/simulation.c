@@ -1,5 +1,5 @@
+#include <stdlib.h>
 #include <SFML/Audio.h>
-#include "engine/engine.h"
 #include "radar/simulation.h"
 #include "radar/parser.h"
 #include "radar/entities/tower.h"
@@ -37,6 +37,7 @@ static radar_definition_t *simulation_load_entities(scene_t *scene, const char *
             case TOWER:
                 tower_scene_append(scene, entity);
                 TAILQ_REMOVE(&def->entities, entity, entry);
+                radar_entity_definition_destroy(entity);
                 break;
             default:
                 break;
@@ -69,7 +70,9 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     ui_element_append_children(scene_get_ui_root(scene), timer_ui);
     radar_definition_t *def = simulation_load_entities(scene, filepath);
     scene_append_system(scene, simulation_system_create(scene, timer_system->context, def));
+
     entity_t *simulation = entity_create();
+    scene_append_entity(scene, simulation);
     system_subscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), simulation);
 
     ambiance_init(scene);

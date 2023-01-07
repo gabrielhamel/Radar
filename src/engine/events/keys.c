@@ -41,3 +41,23 @@ void eh_exec_key_released(events_handler_t *handler, sfEvent *event)
         }
     }
 }
+
+void eh_unbind_key_pressed(events_handler_t *handler)
+{
+    eh_key_bind_t *it = NULL;
+    eh_key_bind_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(it, &handler->key_pressed_binds, entry, tmp) {
+        TAILQ_REMOVE(&handler->key_pressed_binds, it, entry);
+        free(it);
+    }
+}
+
+void eh_unbind_key_released(events_handler_t *handler)
+{
+    eh_key_bind_t *it = NULL;
+    eh_key_bind_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(it, &handler->key_released_binds, entry, tmp) {
+        TAILQ_REMOVE(&handler->key_released_binds, it, entry);
+        free(it);
+    }
+}

@@ -18,3 +18,9 @@ void eh_exec_window_closed(events_handler_t *handler, sfEvent *event)
     }
     handler->window_closed->callback(handler->window_closed->context);
 }
+
+void eh_unbind_window_closed(events_handler_t *handler)
+{
+    free(handler->window_closed);
+    handler->window_closed = NULL;
+}

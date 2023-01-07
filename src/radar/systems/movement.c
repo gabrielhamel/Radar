@@ -35,5 +35,6 @@ system_t *movement_system_create(void)
         .context = NULL,
         .render_handler = NULL,
         .update_handler = update_handler,
+        .destroy_handler = NULL
     });
 }

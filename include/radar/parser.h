@@ -28,5 +28,6 @@ typedef struct {
 } radar_definition_t;
 
 radar_definition_t *parser_read(const char *filename);
+void radar_entity_definition_destroy(radar_entity_definition_t *entity);
 
 #endif // RADAR_PARSER_H

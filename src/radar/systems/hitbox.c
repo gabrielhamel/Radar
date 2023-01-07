@@ -142,6 +142,11 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
     }
 }
 
+static void destroy_handler(system_t *system)
+{
+    free(SYSTEM_CONTEXT(system, hitbox_system_t));
+}
+
 system_t *hitbox_system_create(void)
 {
     hitbox_system_t *data = malloc(sizeof(hitbox_system_t));
@@ -151,5 +156,6 @@ system_t *hitbox_system_create(void)
         .context = data,
         .render_handler = render_handler,
         .update_handler = update_handler,
+        .destroy_handler = destroy_handler
     });
 }

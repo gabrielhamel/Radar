@@ -16,6 +16,7 @@ typedef struct ui_element_s {
     sfSprite *render_sprite;
     sfRectangleShape *background;
     sfText *text;
+    sfFont *font;
     bool text_ready;
     state_event_t *hover_event;
     bool is_hovered;
@@ -31,7 +32,8 @@ void ui_element_set_background_color(ui_element_t *element, sfColor color);
 void ui_element_set_hover_event(ui_element_t *element, state_event_t *event);
 void ui_element_set_click_event(ui_element_t *element, state_event_t *event);
 void ui_element_set_text(ui_element_t *element, const sfUint32 *string);
-void ui_element_set_font(ui_element_t *element, sfFont *font);
+void ui_element_set_font(ui_element_t *element, const char *filepath);
 void ui_element_update(ui_element_t *element, sfTime *elapsed_time);
+void ui_element_destroy(ui_element_t *element);
 
 #endif // UI_H

@@ -15,6 +15,7 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     elem->hover_event = NULL;
     elem->is_hovered = false;
     elem->click_event = NULL;
+    elem->font = NULL;
     elem->text_ready = false;
     elem->text = sfText_create();
     sfText_setFillColor(elem->text, sfBlack);
@@ -26,6 +27,26 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     sfSprite_setTexture(elem->render_sprite, elem->render_texture, sfTrue);
     sfSprite_setPosition(elem->render_sprite, (sfVector2f){renderRectangle.left, renderRectangle.top});
     return elem;
+}
+
+void ui_element_destroy(ui_element_t *element)
+{
+    ui_element_t *it = NULL;
+    ui_element_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(it, &element->children, entry, tmp) {
+        TAILQ_REMOVE(&element->children, it, entry);
+        ui_element_destroy(it);
+    }
+    sfRenderTexture_destroy(element->render_target);
+    sfSprite_destroy(element->render_sprite);
+    sfRectangleShape_destroy(element->background);
+    ui_state_event_destroy(element->hover_event);
+    ui_state_event_destroy(element->click_event);
+    sfText_destroy(element->text);
+    if (element->font) {
+        sfFont_destroy(element->font);
+    }
+    free(element);
 }
 
 void ui_element_append_children(ui_element_t *parent, ui_element_t *child)
@@ -121,7 +142,8 @@ void ui_element_set_text(ui_element_t *element, const sfUint32 *string)
     sfText_setScale(element->text, (sfVector2f){horizontalFactor, 1.f });
 }
 
-void ui_element_set_font(ui_element_t *element, sfFont *font)
+void ui_element_set_font(ui_element_t *element, const char *filepath)
 {
-    sfText_setFont(element->text, font);
+    element->font = sfFont_createFromFile(filepath);
+    sfText_setFont(element->text, element->font);
 }

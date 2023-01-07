@@ -18,5 +18,6 @@ system_t *sprite_drawer_system_create(void)
         .context = NULL,
         .update_handler = NULL,
         .render_handler = render_handler,
+        .destroy_handler = NULL
     });
 }

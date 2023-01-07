@@ -112,3 +112,9 @@ radar_definition_t *parser_read(const char *filename)
     fclose(file);
     return radar;
 }
+
+void radar_entity_definition_destroy(radar_entity_definition_t *entity)
+{
+    free(entity->args);
+    free(entity);
+}

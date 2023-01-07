@@ -45,6 +45,7 @@ bool engine_init(engine_t *engine, engine_params_t params)
     sfImage *app_icon = sfImage_createFromFile(params.app_icon);
     engine->window = engine_window_create(params);
     sfRenderWindow_setIcon(engine->window, 256, 256, sfImage_getPixelsPtr(app_icon));
+    sfImage_destroy(app_icon);
     engine->event = (sfEvent){0};
     engine->clock = sfClock_create();
     engine->elapsed_time = sfTime_Zero;
@@ -61,6 +62,8 @@ void engine_destroy(engine_t *engine)
     if (engine->window != NULL) {
         sfRenderWindow_destroy(engine->window);
     }
+    sfClock_destroy(engine->clock);
+    free(engine->scene);
     free(engine);
 }
 
@@ -80,6 +83,10 @@ void engine_run(engine_t *engine)
         scene_systems_render(engine->scene, engine->window);
         scene_ui_render(engine->scene, engine->window);
         sfRenderWindow_display(engine->window);
+        if (engine->scene->closed) {
+            scene_empty(engine->scene);
+            sfRenderWindow_close(engine->window);
+        }
     }
 }
 

@@ -11,3 +11,10 @@ state_event_t *ui_state_event_create(void (*enter)(void *context), void (*leave)
     event->leave = leave;
     return event;
 }
+
+void ui_state_event_destroy(state_event_t *event)
+{
+    if (event != NULL) {
+        free(event);
+    }
+}

@@ -14,6 +14,16 @@ events_handler_t *eh_create(void)
     return handler;
 }
 
+void eh_destroy(events_handler_t *handler)
+{
+    eh_unbind_key_pressed(handler);
+    eh_unbind_key_released(handler);
+    eh_unbind_mouse_pressed(handler);
+    eh_unbind_mouse_released(handler);
+    eh_unbind_window_closed(handler);
+    free(handler);
+}
+
 void eh_handle_event(events_handler_t *handler, sfEvent *event)
 {
     switch (event->type) {

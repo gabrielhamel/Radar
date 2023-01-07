@@ -49,3 +49,23 @@ void eh_exec_mouse_released(events_handler_t *handler, sfEvent *event)
         }
     }
 }
+
+void eh_unbind_mouse_pressed(events_handler_t *handler)
+{
+    eh_mouse_bind_t *it = NULL;
+    eh_mouse_bind_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(it, &handler->mouse_released_binds, entry, tmp) {
+        TAILQ_REMOVE(&handler->mouse_pressed_binds, it, entry);
+        free(it);
+    }
+}
+
+void eh_unbind_mouse_released(events_handler_t *handler)
+{
+    eh_mouse_bind_t *it = NULL;
+    eh_mouse_bind_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(it, &handler->mouse_released_binds, entry, tmp) {
+        TAILQ_REMOVE(&handler->mouse_released_binds, it, entry);
+        free(it);
+    }
+}

@@ -20,6 +20,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
             if (sfTime_asSeconds(*simulation->timer) >= aircraft->args[5]) {
                 aircraft_scene_append(simulation->scene, aircraft);
                 TAILQ_REMOVE(&simulation->def->entities, aircraft, entry);
+                radar_entity_definition_destroy(aircraft);
             }
         }
         // Kill aircraft that are already reach their destination
@@ -33,6 +34,20 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
     }
 }
 
+static void destroy_handler(system_t *system)
+{
+    radar_entity_definition_t *entity = NULL;
+    radar_entity_definition_t *tmp = NULL;
+
+    TAILQ_FOREACH_SAFE(entity, &SYSTEM_CONTEXT(system, simulation_system_t)->def->entities, entry, tmp) {
+        TAILQ_REMOVE(&SYSTEM_CONTEXT(system, simulation_system_t)->def->entities, entity, entry);
+        radar_entity_definition_destroy(entity);
+    }
+
+    free(SYSTEM_CONTEXT(system, simulation_system_t)->def);
+    free(SYSTEM_CONTEXT(system, simulation_system_t));
+}
+
 system_t *simulation_system_create(scene_t *scene, sfTime *timer, radar_definition_t *def)
 {
     simulation_system_t *simulation = malloc(sizeof(simulation_system_t));
@@ -44,5 +59,6 @@ system_t *simulation_system_create(scene_t *scene, sfTime *timer, radar_definiti
         .context = simulation,
         .update_handler = update_handler,
         .render_handler = NULL,
+        .destroy_handler = destroy_handler,
     });
 }

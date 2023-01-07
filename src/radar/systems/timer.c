@@ -36,6 +36,11 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
     }
 }
 
+static void destroy_handler(system_t *system)
+{
+    free(SYSTEM_CONTEXT(system, sfTime));
+}
+
 system_t *timer_system_create(void)
 {
     sfTime *elapsed_time = malloc(sizeof(sfTime));
@@ -44,5 +49,6 @@ system_t *timer_system_create(void)
         .context = elapsed_time,
         .update_handler = update_handler,
         .render_handler = NULL,
+        .destroy_handler = destroy_handler
     });
 }

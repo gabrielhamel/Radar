@@ -19,6 +19,7 @@ typedef struct {
 
 typedef struct {
     sfSprite *sprite;
+    sfTexture *texture;
 } sprite_component_t;
 
 component_t *sprite_component_create_from_file(const char *filepath, sprite_params_t params);

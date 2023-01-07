@@ -17,12 +17,14 @@ typedef struct system_s {
     void (*update_handler)(struct system_s *, sfTime *);
     void (*render_handler)(struct system_s *, sfRenderWindow *);
     TAILQ_HEAD(, entity_link_s) entities_subscribed;
+    void (*destroy_handler)(struct system_s *);
 } system_t;
 
 typedef struct {
     void *context;
     void (*update_handler)(struct system_s *, sfTime *);
     void (*render_handler)(struct system_s *, sfRenderWindow *);
+    void (*destroy_handler)(struct system_s *);
 } system_params_t;
 
 system_t *system_create(system_type_t type, system_params_t params);

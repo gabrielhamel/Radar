@@ -3,12 +3,11 @@
 
 #include "engine/text/unicode.h"
 
-sfUint32 *string_to_utf8(const char *str)
+void string_to_utf8(sfUint32 *buff, const char *str, size_t max_len)
 {
     size_t len = strlen(str);
-    sfUint32 *buff = malloc(sizeof(sfUint32) * (len + 1));
 
-    for (size_t idx = 0; idx < len; idx++) {
+    for (size_t idx = 0; idx < len && idx < max_len; idx++) {
         buff[idx] = str[idx];
     }
     buff[len] = '\0';

@@ -3,6 +3,6 @@
 
 #include <SFML/Config.h>
 
-sfUint32 *string_to_utf8(const char *str);
+void string_to_utf8(sfUint32 *buff, const char *str, size_t max_len);
 
 #endif // ENGINE_UNICODE_H

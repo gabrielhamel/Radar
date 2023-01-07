@@ -11,6 +11,7 @@ scene_t *scene_create(void)
     TAILQ_INIT(&scene->entities);
     TAILQ_INIT(&scene->systems);
     TAILQ_INIT(&scene->events_handlers);
+    scene->closed = false;
     scene->ui_element_root = ui_element_create((sfIntRect){
         0,
         0,
@@ -52,6 +53,7 @@ void scene_destroy_entity(scene_t *scene, entity_t *entity)
         component_destroy(component);
     }
     TAILQ_REMOVE(&scene->entities, entity, entry);
+    entity_destroy(entity);
 }
 
 system_t *scene_get_system(scene_t *scene, system_type_t system)
@@ -132,11 +134,47 @@ void scene_subscribe_event_handler(scene_t *scene, events_handler_t *handler)
     TAILQ_INSERT_HEAD(&scene->events_handlers, handler, entry);
 }
 
+void scene_destroy_system(scene_t *scene, system_t *system)
+{
+    entity_link_t *link = NULL;
+    entity_link_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(link, &system->entities_subscribed, entry, tmp) {
+        TAILQ_REMOVE(&system->entities_subscribed, link, entry);
+        free(link);
+    }
+
+    if (system->destroy_handler) {
+        system->destroy_handler(system);
+    }
+    TAILQ_REMOVE(&scene->systems, system, entry);
+    free(system);
+}
+
+void scene_close(scene_t *scene)
+{
+    scene->closed = true;
+}
+
 void scene_empty(scene_t *scene)
 {
-    entity_t *it = NULL;
-    entity_t *tmp = NULL;
-    TAILQ_FOREACH_SAFE(it, &scene->entities, entry, tmp) {
-        scene_destroy_entity(scene, it);
+    entity_t *it_entity = NULL;
+    entity_t *tmp_entity = NULL;
+    TAILQ_FOREACH_SAFE(it_entity, &scene->entities, entry, tmp_entity) {
+        scene_destroy_entity(scene, it_entity);
     }
+
+    system_t *it_system = NULL;
+    system_t *tmp_system = NULL;
+    TAILQ_FOREACH_SAFE(it_system, &scene->systems, entry, tmp_system) {
+        scene_destroy_system(scene, it_system);
+    }
+
+    events_handler_t *it_eh = NULL;
+    events_handler_t *it_tmp = NULL;
+    TAILQ_FOREACH_SAFE(it_eh, &scene->events_handlers, entry, it_tmp) {
+        TAILQ_REMOVE(&scene->events_handlers, it_eh, entry);
+        eh_destroy(it_eh);
+    }
+
+    ui_element_destroy(scene->ui_element_root);
 }
