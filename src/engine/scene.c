@@ -37,6 +37,21 @@ void scene_remove_entity(scene_t *scene, entity_t *entity)
         system_unsubscribe_entity(system, entity);
     }
     TAILQ_REMOVE(&scene->entities, entity, entry);
+    entity_destroy(entity);
+}
+
+void scene_destroy_entity(scene_t *scene, entity_t *entity)
+{
+    system_t *system = NULL;
+    TAILQ_FOREACH(system, &scene->systems, entry) {
+        system_unsubscribe_entity(system, entity);
+    }
+    component_t *component = NULL;
+    component_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(component, &entity->components, entry, tmp) {
+        component_destroy(component);
+    }
+    TAILQ_REMOVE(&scene->entities, entity, entry);
 }
 
 system_t *scene_get_system(scene_t *scene, system_type_t system)
@@ -115,4 +130,13 @@ void scene_handle_event(scene_t *scene, sfEvent *event)
 void scene_subscribe_event_handler(scene_t *scene, events_handler_t *handler)
 {
     TAILQ_INSERT_HEAD(&scene->events_handlers, handler, entry);
+}
+
+void scene_empty(scene_t *scene)
+{
+    entity_t *it = NULL;
+    entity_t *tmp = NULL;
+    TAILQ_FOREACH_SAFE(it, &scene->entities, entry, tmp) {
+        scene_destroy_entity(scene, it);
+    }
 }

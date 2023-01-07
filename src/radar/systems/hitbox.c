@@ -21,7 +21,7 @@ static void render_handler(system_t *system, sfRenderWindow *window)
     TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
         entity_t *entity = entity_link->entity;
         
-        hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE);
+        hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE)->data;
         if (hitbox->type == CIRCLE) {
             sfRenderWindow_drawCircleShape(window, hitbox->csfml_object, NULL);
         } else if (hitbox->type == RECT) {
@@ -86,7 +86,7 @@ static bool aircraft_is_under_tower(system_t *system, entity_t *aircraft, hitbox
     entity_link_t *entity_link_checked = NULL;
     TAILQ_FOREACH(entity_link_checked, &system->entities_subscribed, entry) {
         entity_t *entity_checked = entity_link_checked->entity;
-        hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE);
+        hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE)->data;
         if (hitbox_checked->type != CIRCLE) {
             continue;
         }
@@ -104,7 +104,7 @@ static void aircraft_test_collision(system_t *system, entity_link_t *aircraft, h
     entity_link_t *entity_link_checked_tmp = NULL;
     TAILQ_FOREACH_SAFE(entity_link_checked, &system->entities_subscribed, entry, entity_link_checked_tmp) {
         entity_t *entity_checked = entity_link_checked->entity;
-        hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE);
+        hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE)->data;
         if (aircraft->entity == entity_link_checked->entity || aircraft_is_under_tower(system, entity_checked, hitbox_checked)) {
             continue;
         }
@@ -128,7 +128,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
 
     TAILQ_FOREACH_SAFE(entity_link_tested, &system->entities_subscribed, entry, entity_link_tested_tmp) {
         entity_t *entity_tested = entity_link_tested->entity;
-        hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE);
+        hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE)->data;
         if (hitbox_tested->type == RECT && !aircraft_is_under_tower(system, entity_tested, hitbox_tested)) {
             aircraft_test_collision(system, entity_link_tested, hitbox_tested);
         }
@@ -137,7 +137,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
     entity_link_tested_tmp = NULL;
     TAILQ_FOREACH_SAFE(entity_link_tested, &SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entry, entity_link_tested_tmp) {
         TAILQ_REMOVE(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entity_link_tested, entry);
-        aircraft_scene_destroy(scene_get(), entity_link_tested->entity);
+        scene_destroy_entity(scene_get(), entity_link_tested->entity);
         free(entity_link_tested);
     }
 }

@@ -2,10 +2,12 @@
 #include <SFML/Graphics.h>
 
 #include "engine/engine.h"
+#include "engine/ecs/scene.h"
 #include "radar/systems/hitbox.h"
 
 static void close_window(sfRenderWindow *window)
 {
+    scene_empty(scene_get());
     sfRenderWindow_close(window);
 }
 

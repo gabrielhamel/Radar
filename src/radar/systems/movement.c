@@ -10,10 +10,10 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
     TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
         entity_t *entity = entity_link->entity;
         
-        position_component_t *position_c = entity_get_component(entity, POSITION_COMPONENT_TYPE);
-        speed_component_t *speed_c = entity_get_component(entity, SPEED_COMPONENT_TYPE);
-        sprite_component_t *sprite_c = entity_get_component(entity, SPRITE_COMPONENT_TYPE);
-        hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE);
+        position_component_t *position_c = entity_get_component(entity, POSITION_COMPONENT_TYPE)->data;
+        speed_component_t *speed_c = entity_get_component(entity, SPEED_COMPONENT_TYPE)->data;
+        sprite_component_t *sprite_c = entity_get_component(entity, SPRITE_COMPONENT_TYPE)->data;
+        hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE)->data;
 
         position_c->position.x += speed_c->speed.x * sfTime_asSeconds(*elapsed_time);
         position_c->position.y += speed_c->speed.y * sfTime_asSeconds(*elapsed_time);

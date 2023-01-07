@@ -8,7 +8,7 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     ui_element_t *elem = malloc(sizeof(ui_element_t));
 
     TAILQ_INIT(&elem->children);
-    elem->render_target = sfRenderTexture_createWithSettings(renderRectangle.width, renderRectangle.height, NULL);
+    elem->render_target = sfRenderTexture_create(renderRectangle.width, renderRectangle.height, sfFalse);
     elem->render_texture = (sfTexture *)sfRenderTexture_getTexture(elem->render_target);
     elem->render_sprite = sfSprite_create();
     elem->background = sfRectangleShape_create();

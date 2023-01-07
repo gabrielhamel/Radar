@@ -3,6 +3,18 @@
 
 #include "radar/components/hitbox.h"
 
+static void hitbox_component_destroy(component_t *component)
+{
+    hitbox_component_t *data = COMPONENT_DATA(component, hitbox_component_t);
+
+    if (data->type == RECT) {
+        sfRectangleShape_destroy(data->csfml_object);
+    } else if (data->type == CIRCLE) {
+        sfCircleShape_destroy(data->csfml_object);
+    }
+    free(data);
+}
+
 component_t *hitbox_circle_component_create(sfVector2f initial_pos, float radius)
 {
     hitbox_component_t *data = malloc(sizeof(hitbox_component_t));
@@ -19,7 +31,7 @@ component_t *hitbox_circle_component_create(sfVector2f initial_pos, float radius
         radius,
         radius
     });
-    return component_create(HITBOX_COMPONENT_TYPE, data);
+    return component_create(HITBOX_COMPONENT_TYPE, data, hitbox_component_destroy);
 }
 
 component_t *hitbox_rect_component_create(sfVector2f initial_pos)
@@ -40,18 +52,5 @@ component_t *hitbox_rect_component_create(sfVector2f initial_pos)
         10,
         10
     });
-    return component_create(HITBOX_COMPONENT_TYPE, data);
-}
-
-void hitbox_component_destroy(component_t *component)
-{
-    hitbox_component_t *data = COMPONENT_DATA(component, hitbox_component_t);
-
-    if (data->type == RECT) {
-        sfRectangleShape_destroy(data->csfml_object);
-    } else if (data->type == CIRCLE) {
-        sfCircleShape_destroy(data->csfml_object);
-    }
-    free(data);
-    component_destroy(component);
+    return component_create(HITBOX_COMPONENT_TYPE, data, hitbox_component_destroy);
 }

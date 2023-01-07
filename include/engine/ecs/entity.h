@@ -18,7 +18,7 @@ entity_t *entity_create(void);
 void entity_destroy(entity_t *entity);
 bool entity_assign_component(entity_t *entity, component_t *component);
 component_t *entity_remove_component(entity_t *entity, component_type_t type);
-void *entity_get_component(entity_t *entity, component_type_t type);
+component_t *entity_get_component(entity_t *entity, component_type_t type);
 entity_link_t *entity_get_link(entity_t *entity);
 
 #endif // ENTITY_H

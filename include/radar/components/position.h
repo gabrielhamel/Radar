@@ -12,6 +12,5 @@ typedef struct {
 } position_component_t;
 
 component_t *position_component_create(sfVector2f position);
-void position_component_destroy(component_t *component);
 
 #endif // RADAR_POSITION_COMPONENT_H

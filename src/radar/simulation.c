@@ -6,20 +6,12 @@
 #include "radar/systems/sprite_drawer.h"
 #include "radar/systems/simulation.h"
 #include "radar/components/sprite.h"
-#include "radar/components/music.h"
 #include "radar/systems/movement.h"
 #include "radar/systems/hitbox.h"
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
 #include "radar/entities/timer.h"
-
-static void ambiance_init(scene_t *scene)
-{
-    component_t *component = music_component_create_from_path("assets/music.ogg");
-    entity_t *music = entity_create();
-    entity_assign_component(music, component);
-    scene_append_entity(scene, music);
-}
+#include "radar/musics.h"
 
 static void simulation_load_background(scene_t *scene)
 {
@@ -56,7 +48,7 @@ static radar_definition_t *simulation_load_entities(scene_t *scene, const char *
 bool radar_init_from_script(scene_t *scene, const char *filepath)
 {
     entity_t *timer = ui_timer_create();
-    ui_element_t *timer_ui = entity_get_component(timer, UI_LINK_COMPONENT_TYPE);
+    ui_element_t *timer_ui = entity_get_component(timer, UI_LINK_COMPONENT_TYPE)->data;
 
     system_t *hitbox_system = hitbox_system_create();
     scene_append_system(scene, hitbox_system);

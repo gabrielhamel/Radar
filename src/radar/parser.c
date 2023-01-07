@@ -76,12 +76,10 @@ static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_n
     token = strtok(line, ARG_SEPARATORS);
     entity_filter = parser_find_entity_type(token, line_nb);
     if (entity_filter == NULL) {
-        free(line);
         return NULL;
     }
     args = parser_get_args(entity_filter, line_nb);
     if (args == NULL) {
-        free(line);
         return NULL;
     }
     def = malloc(sizeof(radar_entity_definition_t));

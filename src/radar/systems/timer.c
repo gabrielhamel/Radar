@@ -12,7 +12,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
         entity_t *entity = entity_link->entity;
 
         sfTime *total_time = system->context;
-        ui_element_t *timer_ui = entity_get_component(entity, UI_LINK_COMPONENT_TYPE);
+        ui_element_t *timer_ui = entity_get_component(entity, UI_LINK_COMPONENT_TYPE)->data;
 
         total_time->microseconds += elapsed_time->microseconds;
 

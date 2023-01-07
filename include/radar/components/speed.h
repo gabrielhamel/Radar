@@ -12,6 +12,5 @@ typedef struct {
 } speed_component_t;
 
 component_t *speed_component_create(sfVector2f speed);
-void speed_component_destroy(component_t *component);
 
 #endif // RADAR_SPEED_COMPONENT_H

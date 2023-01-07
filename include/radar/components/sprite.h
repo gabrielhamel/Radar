@@ -22,6 +22,5 @@ typedef struct {
 } sprite_component_t;
 
 component_t *sprite_component_create_from_file(const char *filepath, sprite_params_t params);
-void sprite_component_destroy(component_t *component);
 
 #endif // RADAR_SPRITE_COMPONENT_H

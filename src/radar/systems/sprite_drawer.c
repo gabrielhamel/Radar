@@ -7,7 +7,7 @@ static void render_handler(system_t *system, sfRenderWindow *window)
     TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
         entity_t *entity = entity_link->entity;
 
-        sprite_component_t *sprite_c = entity_get_component(entity, SPRITE_COMPONENT_TYPE);
+        sprite_component_t *sprite_c = entity_get_component(entity, SPRITE_COMPONENT_TYPE)->data;
         sfRenderWindow_drawSprite(window, sprite_c->sprite, NULL);
     }
 }

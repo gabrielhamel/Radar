@@ -44,13 +44,13 @@ component_t *entity_remove_component(entity_t *entity, component_type_t type)
     return NULL;
 }
 
-void *entity_get_component(entity_t *entity, component_type_t type)
+component_t *entity_get_component(entity_t *entity, component_type_t type)
 {
     component_t *it = NULL;
 
     TAILQ_FOREACH(it, &entity->components, entry) {
         if (it->type == type) {
-            return it->data;
+            return it;
         }
     }
     return NULL;

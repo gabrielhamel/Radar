@@ -23,11 +23,11 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
             }
         }
         // Kill aircraft that are already reach their destination
-        float *ttl = entity_get_component(entity, TTL_COMPONENT_TYPE);
+        float *ttl = COMPONENT_DATA(entity_get_component(entity, TTL_COMPONENT_TYPE), float);
         if (ttl) {
             *ttl -= sfTime_asSeconds(*elapsed_time);
             if (*ttl <= 0) {
-                aircraft_scene_destroy(simulation->scene, entity);
+                scene_destroy_entity(simulation->scene, entity);
             }
         }
     }

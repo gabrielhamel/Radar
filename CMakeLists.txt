@@ -35,6 +35,7 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/systems/timer.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/movement.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox.c
+    ${PROJECT_SOURCE_DIR}/src/radar/musics/ambiance.c
     ${PROJECT_SOURCE_DIR}/src/engine/engine.c
     ${PROJECT_SOURCE_DIR}/src/engine/scene.c
     ${PROJECT_SOURCE_DIR}/src/engine/events/handler.c
@@ -130,6 +131,6 @@ foreach(MODULE ${CSFML_MODULES})
     )
 endforeach(MODULE)
 
-if (NOT ${WIN32})
+if (${UNIX})
     target_link_libraries(${BINARY_NAME} m)
 endif()
