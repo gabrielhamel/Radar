@@ -6,6 +6,8 @@
 #include "../queue.h"
 #include "entity.h"
 
+#define SYSTEM_CONTEXT(system, context_type)((context_type *)system->context)
+
 typedef int system_type_t;
 
 typedef struct system_s {

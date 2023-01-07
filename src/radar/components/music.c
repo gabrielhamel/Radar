@@ -10,3 +10,11 @@ component_t *music_component_create_from_path(const char *filename)
     sfMusic_setVolume(music, 35);
     return component_create(MUSIC_COMPONENT_TYPE, music);
 }
+
+void music_component_destroy(component_t *component)
+{
+    sfMusic *music = COMPONENT_DATA(component, sfMusic);
+
+    sfMusic_destroy(music);
+    component_destroy(component);
+}

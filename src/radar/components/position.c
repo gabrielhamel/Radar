@@ -10,3 +10,9 @@ component_t *position_component_create(sfVector2f position)
     data->position = position;
     return component_create(POSITION_COMPONENT_TYPE, data);
 }
+
+void position_component_destroy(component_t *component)
+{
+    free(component->data);
+    component_destroy(component);
+}

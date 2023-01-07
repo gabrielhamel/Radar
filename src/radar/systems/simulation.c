@@ -10,7 +10,8 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
 {
     simulation_system_t *simulation = system->context;
     entity_link_t *entity_link = NULL;
-    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
+    entity_link_t *entity_link_tmp = NULL;
+    TAILQ_FOREACH_SAFE(entity_link, &system->entities_subscribed, entry, entity_link_tmp) {
         entity_t *entity = entity_link->entity;
 
         radar_entity_definition_t *aircraft = NULL;
@@ -26,7 +27,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
         if (ttl) {
             *ttl -= sfTime_asSeconds(*elapsed_time);
             if (*ttl <= 0) {
-                scene_remove_entity(simulation->scene, entity);
+                aircraft_scene_destroy(simulation->scene, entity);
             }
         }
     }

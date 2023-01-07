@@ -13,7 +13,5 @@ component_t *component_create(component_type_t type, void *data)
 
 void component_destroy(component_t *component)
 {
-    // TODO
-    // Delete handler
     free(component);
 }

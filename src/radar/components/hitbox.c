@@ -42,3 +42,16 @@ component_t *hitbox_rect_component_create(sfVector2f initial_pos)
     });
     return component_create(HITBOX_COMPONENT_TYPE, data);
 }
+
+void hitbox_component_destroy(component_t *component)
+{
+    hitbox_component_t *data = COMPONENT_DATA(component, hitbox_component_t);
+
+    if (data->type == RECT) {
+        sfRectangleShape_destroy(data->csfml_object);
+    } else if (data->type == CIRCLE) {
+        sfCircleShape_destroy(data->csfml_object);
+    }
+    free(data);
+    component_destroy(component);
+}

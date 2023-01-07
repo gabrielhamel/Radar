@@ -18,5 +18,6 @@ typedef struct {
 
 component_t *hitbox_circle_component_create(sfVector2f initial_pos, float radius);
 component_t *hitbox_rect_component_create(sfVector2f initial_pos);
+void hitbox_component_destroy(component_t *component);
 
 #endif // RADAR_HITBOX_COMPONENT_H

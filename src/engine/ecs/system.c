@@ -37,6 +37,7 @@ bool system_unsubscribe_entity(system_t *system, entity_t *entity)
     TAILQ_FOREACH_SAFE(it, &system->entities_subscribed, entry, tmp) {
         if (entity == it->entity) {
             TAILQ_REMOVE(&system->entities_subscribed, it, entry);
+            free(it);
             return true;
         }
     }

@@ -10,3 +10,9 @@ component_t *speed_component_create(sfVector2f speed)
     data->speed = speed;
     return component_create(SPEED_COMPONENT_TYPE, data);
 }
+
+void speed_component_destroy(component_t *component)
+{
+    free(component->data);
+    component_destroy(component);
+}

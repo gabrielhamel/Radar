@@ -73,7 +73,7 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     scene_append_entity(scene, timer);
     system_subscribe_entity(timer_system, timer);
 
-    scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system->context));
+    scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system));
     ui_element_append_children(scene_get_ui_root(scene), timer_ui);
     radar_definition_t *def = simulation_load_entities(scene, filepath);
     scene_append_system(scene, simulation_system_create(scene, timer_system->context, def));

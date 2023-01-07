@@ -3,6 +3,7 @@
 #endif
 
 #include <math.h>
+#include <stdlib.h>
 
 #include "radar/components/position.h"
 #include "radar/components/speed.h"
@@ -67,4 +68,30 @@ void aircraft_scene_append(scene_t *scene, radar_entity_definition_t *definition
     system_subscribe_entity(scene_get_system(scene, MOVEMENT_SYSTEM_TYPE), aircraft);
     system_subscribe_entity(scene_get_system(scene, HITBOX_SYSTEM_TYPE), aircraft);
     system_subscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), aircraft);
+}
+
+void aircraft_scene_destroy(scene_t *scene, entity_t *aircraft)
+{
+    system_unsubscribe_entity(scene_get_system(scene, SPRITE_DRAWER_SYSTEM_TYPE), aircraft);
+    system_unsubscribe_entity(scene_get_system(scene, MOVEMENT_SYSTEM_TYPE), aircraft);
+    system_unsubscribe_entity(scene_get_system(scene, HITBOX_SYSTEM_TYPE), aircraft);
+    system_unsubscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), aircraft);
+
+    component_t *position = entity_remove_component(aircraft, POSITION_COMPONENT_TYPE);
+    position_component_destroy(position);
+
+    component_t *speed = entity_remove_component(aircraft, SPEED_COMPONENT_TYPE);
+    speed_component_destroy(speed);
+
+    component_t *sprite = entity_remove_component(aircraft, SPRITE_COMPONENT_TYPE);
+    sprite_component_destroy(sprite);
+
+    component_t *hitbox = entity_remove_component(aircraft, HITBOX_COMPONENT_TYPE);
+    hitbox_component_destroy(hitbox);
+
+    component_t *ttl = entity_remove_component(aircraft, TTL_COMPONENT_TYPE);
+    ttl_component_destroy(ttl);
+
+    scene_remove_entity(scene, aircraft);
+    entity_destroy(aircraft);
 }

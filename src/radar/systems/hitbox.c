@@ -9,6 +9,7 @@
 #include "engine/ecs/scene.h"
 #include "radar/systems/hitbox.h"
 #include "radar/components/hitbox.h"
+#include "radar/entities/aircraft.h"
 
 static void render_handler(system_t *system, sfRenderWindow *window)
 {
@@ -97,20 +98,22 @@ static bool aircraft_is_under_tower(system_t *system, entity_t *aircraft, hitbox
     return false;
 }
 
-static void aircraft_test_collision(system_t *system, entity_t *aircraft, hitbox_component_t *hitbox)
+static void aircraft_test_collision(system_t *system, entity_link_t *aircraft, hitbox_component_t *hitbox)
 {
     entity_link_t *entity_link_checked = NULL;
     entity_link_t *entity_link_checked_tmp = NULL;
     TAILQ_FOREACH_SAFE(entity_link_checked, &system->entities_subscribed, entry, entity_link_checked_tmp) {
-        if (aircraft == entity_link_checked->entity) {
-            continue;
-        }
         entity_t *entity_checked = entity_link_checked->entity;
         hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE);
+        if (aircraft->entity == entity_link_checked->entity || aircraft_is_under_tower(system, entity_checked, hitbox_checked)) {
+            continue;
+        }
         if (hitbox_checked->type == RECT && rect_intersect_rect(hitbox, hitbox_checked)) {
             // Plane collides
-            scene_remove_entity(scene_get(), entity_link_checked->entity);
-            scene_remove_entity(scene_get(), aircraft);
+            TAILQ_REMOVE(&system->entities_subscribed, entity_link_checked, entry);
+            TAILQ_REMOVE(&system->entities_subscribed, aircraft, entry);
+            TAILQ_INSERT_TAIL(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entity_link_checked, entry);
+            TAILQ_INSERT_TAIL(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, aircraft, entry);
         }
     }
 }
@@ -119,21 +122,33 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
 {
     entity_link_t *entity_link_tested = NULL;
     entity_link_t *entity_link_tested_tmp = NULL;
+
+    TAILQ_HEAD(, entity_link_s) plane_to_delete;
+    TAILQ_INIT(&plane_to_delete);
+
     TAILQ_FOREACH_SAFE(entity_link_tested, &system->entities_subscribed, entry, entity_link_tested_tmp) {
         entity_t *entity_tested = entity_link_tested->entity;
         hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE);
         if (hitbox_tested->type == RECT && !aircraft_is_under_tower(system, entity_tested, hitbox_tested)) {
-            aircraft_test_collision(system, entity_tested, hitbox_tested);
+            aircraft_test_collision(system, entity_link_tested, hitbox_tested);
         }
+    }
+    entity_link_tested = NULL;
+    entity_link_tested_tmp = NULL;
+    TAILQ_FOREACH_SAFE(entity_link_tested, &SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entry, entity_link_tested_tmp) {
+        TAILQ_REMOVE(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entity_link_tested, entry);
+        aircraft_scene_destroy(scene_get(), entity_link_tested->entity);
+        free(entity_link_tested);
     }
 }
 
 system_t *hitbox_system_create(void)
 {
-    bool *enabled = malloc(sizeof(bool));
-    *enabled = true;
+    hitbox_system_t *data = malloc(sizeof(hitbox_system_t));
+    data->render_enabled = true;
+    TAILQ_INIT(&data->plane_to_delete);
     return system_create(HITBOX_SYSTEM_TYPE, (system_params_t){
-        .context = enabled,
+        .context = data,
         .render_handler = render_handler,
         .update_handler = update_handler,
     });

@@ -17,3 +17,10 @@ component_t *sprite_component_create_from_file(const char *filepath, sprite_para
     sfSprite_setPosition(data->sprite, params.position);
     return component_create(SPRITE_COMPONENT_TYPE, data);
 }
+
+void sprite_component_destroy(component_t *component)
+{
+    sfSprite_destroy(COMPONENT_DATA(component, sprite_component_t)->sprite);
+    free(component->data);
+    component_destroy(component);
+}
