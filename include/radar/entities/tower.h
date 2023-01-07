@@ -6,6 +6,7 @@
 #include "engine/ecs/entity.h"
 
 void tower_scene_append(scene_t *scene, radar_entity_definition_t *definition);
+void tower_scene_destroy(scene_t *scene, entity_t *aircraft);
 
 #endif // RADAR_TOWER_H
 
