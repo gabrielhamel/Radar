@@ -3,7 +3,6 @@
 #endif
 
 #include <math.h>
-#include <stdlib.h>
 
 #include "radar/components/position.h"
 #include "radar/components/speed.h"

@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <SFML/Audio.h>
 #include "radar/simulation.h"
 #include "radar/parser.h"

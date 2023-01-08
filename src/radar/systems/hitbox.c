@@ -9,7 +9,6 @@
 #include "engine/ecs/scene.h"
 #include "radar/systems/hitbox.h"
 #include "radar/components/hitbox.h"
-#include "radar/entities/aircraft.h"
 
 static void render_handler(system_t *system, sfRenderWindow *window)
 {
