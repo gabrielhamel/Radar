@@ -121,6 +121,99 @@ static void aircraft_test_collision(system_t *system, entity_link_t *aircraft, h
     }
 }
 
+static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b1, sfVector2f b2)
+{
+    // Avoid 0 div
+    if (a2.x - a1.x == 0 || b2.x - b1.x == 0) {
+        return false;
+    }
+
+    float fa1 = (a2.y - a1.y) / (a2.x - a1.x);
+    float fa2 = (b2.y - b1.y) / (b2.x - b1.x);
+    float fb1 = a1.y - fa1 * a1.x;
+    float fb2 = b1.y - fa2 * b1.x;
+
+    // Avoid 0 div
+    if (fa1 - fa2 == 0) {
+        return false;
+    }
+    float intersect_x = (fb2 - fb1) / (fa1 - fa2);
+
+    // Take the smallest x point
+    float s1_x_min = min(a1.x, a2.x);
+    float s2_x_min = min(b1.x, b2.x);
+    float s_min = max(s1_x_min, s2_x_min);
+
+    // Take the biggest x point
+    float s1_x_max = max(a1.x, a2.x);
+    float s2_x_max = max(b1.x, b2.x);
+    float s_max = min(s1_x_max, s2_x_max);
+
+    return intersect_x >= s_min && intersect_x <= s_max;
+}
+
+static bool custom_intersect_custom(hitbox_component_t *a, hitbox_component_t *b)
+{
+    sfVector2f pos_a = sfConvexShape_getPosition(a->csfml_object);
+    sfVector2f pos_b = sfConvexShape_getPosition(b->csfml_object);
+
+    for (size_t it_a = 0; it_a < a->point_count - 1; it_a++) {
+        for (size_t it_b = 0; it_b < b->point_count - 1; it_b++) {
+            if (segment_intersect_segment(
+                    (sfVector2f){a->points[it_a].x + pos_a.x, a->points[it_a].y + pos_a.y},
+                    (sfVector2f){a->points[it_a + 1].x + pos_a.x, a->points[it_a + 1].y + pos_a.y},
+                    (sfVector2f){b->points[it_b].x + pos_b.x, b->points[it_b].y + pos_b.y},
+                    (sfVector2f){b->points[it_b + 1].x + pos_b.x, b->points[it_b + 1].y + pos_b.y}
+            )) {
+                return true;
+            }
+        }
+    }
+//    // Last a segment
+    for (size_t it_b = 0; it_b < b->point_count - 1; it_b++) {
+        if (segment_intersect_segment(
+                (sfVector2f){a->points[a->point_count - 1].x + pos_a.x, a->points[a->point_count - 1].y + pos_a.y},
+                (sfVector2f){a->points[0].x + pos_a.x, a->points[0].y + pos_a.y},
+                (sfVector2f){b->points[it_b].x + pos_b.x, b->points[it_b].y + pos_b.y},
+                (sfVector2f){b->points[it_b + 1].x + pos_b.x, b->points[it_b + 1].y + pos_b.y}
+        )) {
+            return true;
+        }
+    }
+    // Last b segment
+    for (size_t it_a = 0; it_a < a->point_count - 1; it_a++) {
+        if (segment_intersect_segment(
+                (sfVector2f){a->points[it_a].x + pos_a.x, a->points[it_a].y + pos_a.y},
+                (sfVector2f){a->points[it_a + 1].x + pos_a.x, a->points[it_a + 1].y + pos_a.y},
+                (sfVector2f){b->points[b->point_count - 1].x + pos_b.x, b->points[b->point_count - 1].y + pos_b.y},
+                (sfVector2f){b->points[0].x + pos_b.x, b->points[0].y + pos_b.y}
+        )) {
+            return true;
+        }
+    }
+    return false;
+}
+
+#include <stdio.h>
+
+static void custom_hitbox_collision(system_t *system, hitbox_component_t *tested)
+{
+    entity_link_t *entity_link_tested = NULL;
+    entity_link_t *entity_link_tested_tmp = NULL;
+
+    TAILQ_FOREACH_SAFE(entity_link_tested, &system->entities_subscribed, entry, entity_link_tested_tmp) {
+        entity_t *entity_tested = entity_link_tested->entity;
+        hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE)->data;
+        if (hitbox_tested->type != CUSTOM || hitbox_tested == tested) {
+            continue;
+        }
+        if (custom_intersect_custom(tested, hitbox_tested)) {
+            printf("Intersection\n", tested->point_count, hitbox_tested->point_count);
+            fflush(stdout);
+        }
+    }
+}
+
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
     entity_link_t *entity_link_tested = NULL;
@@ -134,6 +227,9 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
         hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE)->data;
         if (hitbox_tested->type == RECT && !aircraft_is_under_tower(system, entity_tested, hitbox_tested)) {
             aircraft_test_collision(system, entity_link_tested, hitbox_tested);
+        }
+        if (hitbox_tested->type == CUSTOM) {
+            custom_hitbox_collision(system, hitbox_tested);
         }
     }
     entity_link_tested = NULL;

@@ -15,6 +15,8 @@ typedef enum {
 typedef struct {
     hitbox_type_t type;
     void *csfml_object;
+    sfVector2f *points;
+    size_t point_count;
 } hitbox_component_t;
 
 component_t *hitbox_circle_component_create(sfVector2f initial_pos, float radius);

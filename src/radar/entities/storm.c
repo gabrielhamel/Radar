@@ -78,7 +78,6 @@ static entity_t *storm_create_from_definition(radar_entity_definition_t *definit
     component_t *hitbox = hitbox_custom_component_create(
             COMPONENT_DATA(position, position_component_t)->position,
             points, definition->args_count / 2);
-    free(points);
 
     component_t *speed = speed_component_create((sfVector2f){0, 0});
 

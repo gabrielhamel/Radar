@@ -16,6 +16,9 @@ static void hitbox_component_destroy(component_t *component)
         sfConvexShape_destroy(data->csfml_object);
         sfTexture_destroy(texture);
     }
+    if (data->points) {
+        free(data->points);
+    }
     free(data);
 }
 
@@ -35,6 +38,8 @@ component_t *hitbox_circle_component_create(sfVector2f initial_pos, float radius
         radius,
         radius
     });
+    data->points = NULL;
+    data->point_count = 0;
     return component_create(HITBOX_COMPONENT_TYPE, data, hitbox_component_destroy);
 }
 
@@ -56,6 +61,8 @@ component_t *hitbox_rect_component_create(sfVector2f initial_pos)
         10,
         10
     });
+    data->points = NULL;
+    data->point_count = 0;
     return component_create(HITBOX_COMPONENT_TYPE, data, hitbox_component_destroy);
 }
 
@@ -79,6 +86,9 @@ component_t *hitbox_custom_component_create(sfVector2f initial_pos, sfVector2f *
     sfConvexShape_setPosition(data->csfml_object, initial_pos);
     sfConvexShape_setOutlineColor(data->csfml_object, sfRed);
     sfConvexShape_setOutlineThickness(data->csfml_object, 2);
+
+    data->points = points;
+    data->point_count = count;
 
     return component_create(HITBOX_COMPONENT_TYPE, data, hitbox_component_destroy);
 }
