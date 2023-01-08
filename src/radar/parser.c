@@ -6,7 +6,8 @@
 
 static const entity_filter_t entity_filters[]  = {
     { AIRCRAFT, 6},
-    {TOWER, 3}
+    {TOWER, 3},
+    {STORM, -1}
 };
 
 static entity_filter_t *parser_find_entity_type(char *token, size_t *line_nb)
@@ -29,9 +30,35 @@ static entity_filter_t *parser_find_entity_type(char *token, size_t *line_nb)
     return entity_filter;
 }
 
-static unsigned int *parser_get_args(entity_filter_t *entity_filter, size_t *line_nb)
+static parsed_arg_t parser_get_args_undefined_length(entity_filter_t *entity_filter, size_t *line_nb)
 {
-    unsigned int *args = malloc(sizeof(unsigned int) * entity_filter->number_of_params);
+    int *args = NULL;
+    char *token;
+    size_t arg_index = 0;
+
+    do {
+        token = strtok(NULL, ARG_SEPARATORS);
+        if (token == NULL) {
+            break;
+        }
+        args = realloc(args, sizeof(int) * (arg_index + 1));
+        args[arg_index++] = atoi(token);
+    } while (token);
+
+    if (arg_index < 6 || arg_index % 2 == 1) {
+        fprintf(stderr, "Line %zd: Too few points\n", *line_nb);
+        return (parsed_arg_t){0, 0};
+    }
+
+    return (parsed_arg_t){
+        .args = args,
+        .count = arg_index
+    };
+}
+
+static int *parser_get_args(entity_filter_t *entity_filter, size_t *line_nb)
+{
+    int *args = malloc(sizeof(int) * entity_filter->number_of_params);
     size_t arg_index = 0;
     char *token;
 
@@ -60,11 +87,12 @@ static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_n
     char line[4096] = {0};
     char *token = NULL;
     char *readed = NULL;
+    parsed_arg_t parsed = {0};
 
     readed = fgets(line, 4096, file);
 
     entity_filter_t *entity_filter = NULL;
-    unsigned int *args;
+    int *args;
     radar_entity_definition_t *def;
 
     if (readed == NULL) {
@@ -78,13 +106,19 @@ static radar_entity_definition_t *parser_parse_entity(FILE *file, size_t *line_n
     if (entity_filter == NULL) {
         return NULL;
     }
-    args = parser_get_args(entity_filter, line_nb);
+    if (entity_filter->number_of_params == -1) {
+        parsed = parser_get_args_undefined_length(entity_filter, line_nb);
+        args = parsed.args;
+    } else {
+        args = parser_get_args(entity_filter, line_nb);
+    }
     if (args == NULL) {
         return NULL;
     }
     def = malloc(sizeof(radar_entity_definition_t));
     def->type = entity_filter->type;
     def->args = args;
+    def->args_count = entity_filter->number_of_params == -1 ? parsed.count : entity_filter->number_of_params;
     return def;
 }
 

@@ -8,7 +8,8 @@
 
 typedef enum {
     RECT,
-    CIRCLE
+    CIRCLE,
+    CUSTOM
 } hitbox_type_t;
 
 typedef struct {
@@ -18,5 +19,6 @@ typedef struct {
 
 component_t *hitbox_circle_component_create(sfVector2f initial_pos, float radius);
 component_t *hitbox_rect_component_create(sfVector2f initial_pos);
+component_t *hitbox_custom_component_create(sfVector2f initial_pos, sfVector2f *points, size_t count);
 
 #endif // RADAR_HITBOX_COMPONENT_H

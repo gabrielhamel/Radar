@@ -12,15 +12,19 @@
 
 static void render_handler(system_t *system, sfRenderWindow *window)
 {
-    if (!*((bool *)system->context)) {
-        return;
-    }
-
     entity_link_t *entity_link = NULL;
     TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
         entity_t *entity = entity_link->entity;
-        
         hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE)->data;
+
+        if (hitbox->type == CUSTOM) {
+            sfRenderWindow_drawConvexShape(window, hitbox->csfml_object, NULL);
+        }
+
+        if (!*((bool *)system->context)) {
+            continue;
+        }
+
         if (hitbox->type == CIRCLE) {
             sfRenderWindow_drawCircleShape(window, hitbox->csfml_object, NULL);
         } else if (hitbox->type == RECT) {

@@ -10,6 +10,7 @@
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
 #include "radar/entities/timer.h"
+#include "radar/entities/storm.h"
 #include "radar/musics.h"
 
 static void simulation_load_background(scene_t *scene)
@@ -35,6 +36,11 @@ static radar_definition_t *simulation_load_entities(scene_t *scene, const char *
         switch (entity->type) {
             case TOWER:
                 tower_scene_append(scene, entity);
+                TAILQ_REMOVE(&def->entities, entity, entry);
+                radar_entity_definition_destroy(entity);
+                break;
+            case STORM:
+                storm_scene_append(scene, entity);
                 TAILQ_REMOVE(&def->entities, entity, entry);
                 radar_entity_definition_destroy(entity);
                 break;
@@ -68,6 +74,7 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     scene_subscribe_event_handler(scene, simulation_event_handler_create(hitbox_system));
     ui_element_append_children(scene_get_ui_root(scene), timer_ui);
     radar_definition_t *def = simulation_load_entities(scene, filepath);
+
     scene_append_system(scene, simulation_system_create(scene, timer_system->context, def));
 
     entity_t *simulation = entity_create();
