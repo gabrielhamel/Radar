@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/queue.h"
+#include "engine/tools/lists.h"
 #include "radar/systems/simulation.h"
 #include "radar/parser.h"
 #include "radar/entities/aircraft.h"
@@ -8,12 +8,10 @@
 
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    simulation_system_t *simulation = system->context;
-    entity_link_t *entity_link = NULL;
-    entity_link_t *entity_link_tmp = NULL;
-    TAILQ_FOREACH_SAFE(entity_link, &system->entities_subscribed, entry, entity_link_tmp) {
-        entity_t *entity = entity_link->entity;
+    simulation_system_t *simulation = system_get_context(system, simulation_system_t);
+    entity_iterator_t *it = system_get_entity_iterator(system);
 
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
         radar_entity_definition_t *aircraft = NULL;
         radar_entity_definition_t *aircraft_tmp = NULL;
         TAILQ_FOREACH_SAFE(aircraft, &simulation->def->entities, entry, aircraft_tmp) {
@@ -24,7 +22,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
             }
         }
         // Kill aircraft that are already reach their destination
-        float *ttl = COMPONENT_DATA(entity_get_component(entity, TTL_COMPONENT_TYPE), float);
+        float *ttl = component_get_data(entity_get_component(entity, TTL_COMPONENT_TYPE), float);
         if (ttl) {
             *ttl -= sfTime_asSeconds(*elapsed_time);
             if (*ttl <= 0) {
@@ -32,6 +30,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
             }
         }
     }
+    entity_iterator_destroy(it);
 }
 
 static void destroy_handler(system_t *system)
@@ -39,13 +38,15 @@ static void destroy_handler(system_t *system)
     radar_entity_definition_t *entity = NULL;
     radar_entity_definition_t *tmp = NULL;
 
-    TAILQ_FOREACH_SAFE(entity, &SYSTEM_CONTEXT(system, simulation_system_t)->def->entities, entry, tmp) {
-        TAILQ_REMOVE(&SYSTEM_CONTEXT(system, simulation_system_t)->def->entities, entity, entry);
+    simulation_system_t *context = system_get_context(system, simulation_system_t);
+
+    TAILQ_FOREACH_SAFE(entity, &context->def->entities, entry, tmp) {
+        TAILQ_REMOVE(&context->def->entities, entity, entry);
         radar_entity_definition_destroy(entity);
     }
 
-    free(SYSTEM_CONTEXT(system, simulation_system_t)->def);
-    free(SYSTEM_CONTEXT(system, simulation_system_t));
+    free(context->def);
+    free(context);
 }
 
 system_t *simulation_system_create(scene_t *scene, sfTime *timer, radar_definition_t *def)

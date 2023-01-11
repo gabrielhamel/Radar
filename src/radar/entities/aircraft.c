@@ -32,7 +32,7 @@ static entity_t *aircraft_create_from_definition(radar_entity_definition_t *defi
         sin(angle) * (float)definition->args[4]
     });
     component_t *sprite = sprite_component_create_from_file("./assets/aircraft.png", (sprite_params_t){
-        .position = COMPONENT_DATA(position, position_component_t)->position,
+        .position = component_get_data(position, position_component_t)->position,
         .origin = CENTER
     });
     component_t *hitbox = hitbox_rect_component_create((sfVector2f){
@@ -41,14 +41,14 @@ static entity_t *aircraft_create_from_definition(radar_entity_definition_t *defi
     });
 
     float alive_time = vector.x /
-            COMPONENT_DATA(speed, speed_component_t)->speed.x;
+            component_get_data(speed, speed_component_t)->speed.x;
     if (alive_time == 0) {
         alive_time = vector.y /
-        COMPONENT_DATA(speed, speed_component_t)->speed.y;
+            component_get_data(speed, speed_component_t)->speed.y;
     }
     component_t *ttl = ttl_component_create(alive_time);
 
-    sfSprite_setRotation(COMPONENT_DATA(sprite, sprite_component_t)->sprite, angle * 180.0 / M_PI);
+    sfSprite_setRotation(component_get_data(sprite, sprite_component_t)->sprite, angle * 180.0 / M_PI);
 
     entity_assign_component(aircraft, position);
     entity_assign_component(aircraft, speed);

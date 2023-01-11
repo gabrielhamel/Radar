@@ -5,7 +5,7 @@
 
 static void ttl_component_destroy(component_t *component)
 {
-    free(component->data);
+    free(component_get_raw_data(component));
 }
 
 component_t *ttl_component_create(float remaining_time)

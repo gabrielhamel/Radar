@@ -3,13 +3,13 @@
 
 static void render_handler(system_t *system, sfRenderWindow *window)
 {
-    entity_link_t *entity_link = NULL;
-    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
-        entity_t *entity = entity_link->entity;
+    entity_iterator_t *it = system_get_entity_iterator(system);
 
-        sprite_component_t *sprite_c = entity_get_component(entity, SPRITE_COMPONENT_TYPE)->data;
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        sprite_component_t *sprite_c = component_get_data(entity_get_component(entity, SPRITE_COMPONENT_TYPE), sprite_component_t);
         sfRenderWindow_drawSprite(window, sprite_c->sprite, NULL);
     }
+    entity_iterator_destroy(it);
 }
 
 system_t *sprite_drawer_system_create(void)

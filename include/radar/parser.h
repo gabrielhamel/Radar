@@ -2,7 +2,7 @@
 #define RADAR_PARSER_H
 
 #include <stdio.h>
-#include "engine/queue.h"
+#include <engine/tools/lists.h>
 
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof(*x))
 #define ARG_SEPARATORS " \t"

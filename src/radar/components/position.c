@@ -5,7 +5,7 @@
 
 static void position_component_destroy(component_t *component)
 {
-    free(component->data);
+    free(component_get_raw_data(component));
 }
 
 component_t *position_component_create(sfVector2f position)

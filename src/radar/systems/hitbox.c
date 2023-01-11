@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES
@@ -12,16 +13,16 @@
 
 static void render_handler(system_t *system, sfRenderWindow *window)
 {
-    entity_link_t *entity_link = NULL;
-    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
-        entity_t *entity = entity_link->entity;
-        hitbox_component_t *hitbox = entity_get_component(entity, HITBOX_COMPONENT_TYPE)->data;
+    entity_iterator_t *it = system_get_entity_iterator(system);
+
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        hitbox_component_t *hitbox = component_get_data(entity_get_component(entity, HITBOX_COMPONENT_TYPE), hitbox_component_t);
 
         if (hitbox->type == CUSTOM) {
             sfRenderWindow_drawConvexShape(window, hitbox->csfml_object, NULL);
         }
 
-        if (!*((bool *)system->context)) {
+        if (!*((bool *)system_get_context(system, bool))) {
             continue;
         }
 
@@ -31,6 +32,7 @@ static void render_handler(system_t *system, sfRenderWindow *window)
             sfRenderWindow_drawRectangleShape(window, hitbox->csfml_object, NULL);
         }
     }
+    entity_iterator_destroy(it);
 }
 
 static bool rect_intersect_rect(hitbox_component_t *hitbox_tested, hitbox_component_t *hitbox_checked)
@@ -86,10 +88,10 @@ static bool rect_intersect_circle(hitbox_component_t *aircraft_hitbox, hitbox_co
 
 static bool aircraft_is_under_tower(system_t *system, entity_t *aircraft, hitbox_component_t *hitbox)
 {
-    entity_link_t *entity_link_checked = NULL;
-    TAILQ_FOREACH(entity_link_checked, &system->entities_subscribed, entry) {
-        entity_t *entity_checked = entity_link_checked->entity;
-        hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE)->data;
+    entity_iterator_t *it = system_get_entity_iterator(system);
+
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        hitbox_component_t *hitbox_checked = component_get_data(entity_get_component(entity, HITBOX_COMPONENT_TYPE), hitbox_component_t);
         if (hitbox_checked->type != CIRCLE) {
             continue;
         }
@@ -98,27 +100,28 @@ static bool aircraft_is_under_tower(system_t *system, entity_t *aircraft, hitbox
             return true;
         }
     }
+    entity_iterator_destroy(it);
     return false;
 }
 
-static void aircraft_test_collision(system_t *system, entity_link_t *aircraft, hitbox_component_t *hitbox)
+static void aircraft_test_collision(system_t *system, entity_t *aircraft, hitbox_component_t *hitbox)
 {
-    entity_link_t *entity_link_checked = NULL;
-    entity_link_t *entity_link_checked_tmp = NULL;
-    TAILQ_FOREACH_SAFE(entity_link_checked, &system->entities_subscribed, entry, entity_link_checked_tmp) {
-        entity_t *entity_checked = entity_link_checked->entity;
-        hitbox_component_t *hitbox_checked = entity_get_component(entity_checked, HITBOX_COMPONENT_TYPE)->data;
-        if (aircraft->entity == entity_link_checked->entity || aircraft_is_under_tower(system, entity_checked, hitbox_checked)) {
+    entity_iterator_t *it = system_get_entity_iterator(system);
+
+    hitbox_system_t *context = system_get_context(system, hitbox_system_t);
+
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        hitbox_component_t *hitbox_checked = component_get_data(entity_get_component(entity, HITBOX_COMPONENT_TYPE), hitbox_component_t);
+        if (aircraft == entity || aircraft_is_under_tower(system, entity, hitbox_checked)) {
             continue;
         }
         if (hitbox_checked->type == RECT && rect_intersect_rect(hitbox, hitbox_checked)) {
             // Plane collides
-            TAILQ_REMOVE(&system->entities_subscribed, entity_link_checked, entry);
-            TAILQ_REMOVE(&system->entities_subscribed, aircraft, entry);
-            TAILQ_INSERT_TAIL(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entity_link_checked, entry);
-            TAILQ_INSERT_TAIL(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, aircraft, entry);
+            entity_set_append(context->crashed_aircrafts, entity);
+            entity_set_append(context->crashed_aircrafts, aircraft);
         }
     }
+    entity_iterator_destroy(it);
 }
 
 static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b1, sfVector2f b2)
@@ -194,16 +197,12 @@ static bool custom_intersect_custom(hitbox_component_t *a, hitbox_component_t *b
     return false;
 }
 
-#include <stdio.h>
-
 static void custom_hitbox_collision(system_t *system, hitbox_component_t *tested)
 {
-    entity_link_t *entity_link_tested = NULL;
-    entity_link_t *entity_link_tested_tmp = NULL;
+    entity_iterator_t *it = system_get_entity_iterator(system);
 
-    TAILQ_FOREACH_SAFE(entity_link_tested, &system->entities_subscribed, entry, entity_link_tested_tmp) {
-        entity_t *entity_tested = entity_link_tested->entity;
-        hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE)->data;
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        hitbox_component_t *hitbox_tested = component_get_data(entity_get_component(entity, HITBOX_COMPONENT_TYPE), hitbox_component_t);
         if (hitbox_tested->type != CUSTOM || hitbox_tested == tested) {
             continue;
         }
@@ -212,45 +211,46 @@ static void custom_hitbox_collision(system_t *system, hitbox_component_t *tested
             fflush(stdout);
         }
     }
+    entity_iterator_destroy(it);
 }
 
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    entity_link_t *entity_link_tested = NULL;
-    entity_link_t *entity_link_tested_tmp = NULL;
+    entity_iterator_t *it = system_get_entity_iterator(system);
 
-    TAILQ_HEAD(, entity_link_s) plane_to_delete;
-    TAILQ_INIT(&plane_to_delete);
-
-    TAILQ_FOREACH_SAFE(entity_link_tested, &system->entities_subscribed, entry, entity_link_tested_tmp) {
-        entity_t *entity_tested = entity_link_tested->entity;
-        hitbox_component_t *hitbox_tested = entity_get_component(entity_tested, HITBOX_COMPONENT_TYPE)->data;
-        if (hitbox_tested->type == RECT && !aircraft_is_under_tower(system, entity_tested, hitbox_tested)) {
-            aircraft_test_collision(system, entity_link_tested, hitbox_tested);
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        hitbox_component_t *hitbox_tested = component_get_data(entity_get_component(entity, HITBOX_COMPONENT_TYPE), hitbox_component_t);
+        if (hitbox_tested->type == RECT && !aircraft_is_under_tower(system, entity, hitbox_tested)) {
+            aircraft_test_collision(system, entity, hitbox_tested);
         }
         if (hitbox_tested->type == CUSTOM) {
             custom_hitbox_collision(system, hitbox_tested);
         }
     }
-    entity_link_tested = NULL;
-    entity_link_tested_tmp = NULL;
-    TAILQ_FOREACH_SAFE(entity_link_tested, &SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entry, entity_link_tested_tmp) {
-        TAILQ_REMOVE(&SYSTEM_CONTEXT(system, hitbox_system_t)->plane_to_delete, entity_link_tested, entry);
-        scene_destroy_entity(scene_get(), entity_link_tested->entity);
-        free(entity_link_tested);
+    entity_iterator_destroy(it);
+
+    hitbox_system_t *context = system_get_context(system, hitbox_system_t);
+    it = entity_set_get_iterator(context->crashed_aircrafts);
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        scene_destroy_entity(scene_get(), entity);
     }
+    entity_iterator_destroy(it);
+
+    entity_set_empty(context->crashed_aircrafts);
 }
 
 static void destroy_handler(system_t *system)
 {
-    free(SYSTEM_CONTEXT(system, hitbox_system_t));
+    hitbox_system_t *context = system_get_context(system, hitbox_system_t);
+    entity_set_destroy(context->crashed_aircrafts);
+    free(context);
 }
 
 system_t *hitbox_system_create(void)
 {
     hitbox_system_t *data = malloc(sizeof(hitbox_system_t));
     data->render_enabled = true;
-    TAILQ_INIT(&data->plane_to_delete);
+    data->crashed_aircrafts = entity_set_create();
     return system_create(HITBOX_SYSTEM_TYPE, (system_params_t){
         .context = data,
         .render_handler = render_handler,

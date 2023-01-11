@@ -13,7 +13,7 @@ static entity_t *tower_create_from_definition(radar_entity_definition_t *definit
         definition->args[1]
     });
     component_t *sprite = sprite_component_create_from_file("./assets/tower.png", (sprite_params_t){
-        .position = COMPONENT_DATA(position, position_component_t)->position,
+        .position = component_get_data(position, position_component_t)->position,
         .origin = CENTER,
     });
     component_t *hitbox = hitbox_circle_component_create((sfVector2f){

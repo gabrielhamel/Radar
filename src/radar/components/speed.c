@@ -5,7 +5,7 @@
 
 static void speed_component_destroy(component_t *component)
 {
-    free(component->data);
+    free(component_get_raw_data(component));
 }
 
 component_t *speed_component_create(sfVector2f speed)

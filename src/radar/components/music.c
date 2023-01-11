@@ -4,7 +4,7 @@
 
 static void music_component_destroy(component_t *component)
 {
-    sfMusic_destroy(COMPONENT_DATA(component, sfMusic));
+    sfMusic_destroy(component_get_data(component, sfMusic));
 }
 
 component_t *music_component_create_from_path(const char *filename)

@@ -37,18 +37,18 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/systems/movement.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox.c
     ${PROJECT_SOURCE_DIR}/src/radar/musics/ambiance.c
-    ${PROJECT_SOURCE_DIR}/src/engine/engine.c
-    ${PROJECT_SOURCE_DIR}/src/engine/scene.c
-    ${PROJECT_SOURCE_DIR}/src/engine/events/handler.c
-    ${PROJECT_SOURCE_DIR}/src/engine/events/keys.c
-    ${PROJECT_SOURCE_DIR}/src/engine/events/mouse.c
-    ${PROJECT_SOURCE_DIR}/src/engine/events/window.c
-    ${PROJECT_SOURCE_DIR}/src/engine/ui/element.c
-    ${PROJECT_SOURCE_DIR}/src/engine/ui/events.c
-    ${PROJECT_SOURCE_DIR}/src/engine/text/unicode.c
-    ${PROJECT_SOURCE_DIR}/src/engine/ecs/entity.c
-    ${PROJECT_SOURCE_DIR}/src/engine/ecs/component.c
-    ${PROJECT_SOURCE_DIR}/src/engine/ecs/system.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/engine.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/scene.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/events/handler.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/events/keys.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/events/mouse.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/events/window.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/ui/element.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/ui/events.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/text/unicode.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/ecs/entity.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/ecs/component.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/ecs/system.c
 )
 
 set_target_properties(${BINARY_NAME}
@@ -124,6 +124,7 @@ if (${WIN32})
 endif()
 
 target_include_directories(${BINARY_NAME} PRIVATE include)
+target_include_directories(${BINARY_NAME} PRIVATE lib/engine/include)
 
 # Link modules to the target
 foreach(MODULE ${CSFML_MODULES})

@@ -1,4 +1,4 @@
-#include "engine/engine.h"
+#include <engine/ecs/scene.h>
 #include "radar/components/music.h"
 
 entity_t *ambiance_init(scene_t *scene)

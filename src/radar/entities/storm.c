@@ -76,7 +76,7 @@ static entity_t *storm_create_from_definition(radar_entity_definition_t *definit
     component_t *position = position_component_create((sfVector2f){0, 0});
 
     component_t *hitbox = hitbox_custom_component_create(
-            COMPONENT_DATA(position, position_component_t)->position,
+            component_get_data(position, position_component_t)->position,
             points, definition->args_count / 2);
 
     component_t *speed = speed_component_create((sfVector2f){0, 0});
@@ -99,6 +99,6 @@ void storm_scene_append(scene_t *scene, radar_entity_definition_t *definition)
     static int shape_count = 0;
 
     if (shape_count++ == 0) {
-        storm_events(scene, COMPONENT_DATA(entity_get_component(storm, SPEED_COMPONENT_TYPE), speed_component_t));
+        storm_events(scene, component_get_data(entity_get_component(storm, SPEED_COMPONENT_TYPE), speed_component_t));
     }
 }

@@ -5,9 +5,9 @@
 
 static void sprite_component_destroy(component_t *component)
 {
-    sfSprite_destroy(COMPONENT_DATA(component, sprite_component_t)->sprite);
-    sfTexture_destroy(COMPONENT_DATA(component, sprite_component_t)->texture);
-    free(component->data);
+    sfSprite_destroy(component_get_data(component, sprite_component_t)->sprite);
+    sfTexture_destroy(component_get_data(component, sprite_component_t)->texture);
+    free(component_get_raw_data(component));
 }
 
 component_t *sprite_component_create_from_file(const char *filepath, sprite_params_t params)

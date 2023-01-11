@@ -54,7 +54,7 @@ static radar_definition_t *simulation_load_entities(scene_t *scene, const char *
 bool radar_init_from_script(scene_t *scene, const char *filepath)
 {
     entity_t *timer = ui_timer_create();
-    ui_element_t *timer_ui = entity_get_component(timer, UI_LINK_COMPONENT_TYPE)->data;
+    ui_element_t *timer_ui = component_get_data(entity_get_component(timer, UI_LINK_COMPONENT_TYPE), ui_element_t);
 
     system_t *hitbox_system = hitbox_system_create();
     scene_append_system(scene, hitbox_system);
@@ -75,7 +75,7 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     ui_element_append_children(scene_get_ui_root(scene), timer_ui);
     radar_definition_t *def = simulation_load_entities(scene, filepath);
 
-    scene_append_system(scene, simulation_system_create(scene, timer_system->context, def));
+    scene_append_system(scene, simulation_system_create(scene, system_get_context(timer_system, sfTime), def));
 
     entity_t *simulation = entity_create();
     scene_append_entity(scene, simulation);

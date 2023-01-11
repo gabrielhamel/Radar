@@ -7,12 +7,11 @@
 
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    entity_link_t *entity_link = NULL;
-    TAILQ_FOREACH(entity_link, &system->entities_subscribed, entry) {
-        entity_t *entity = entity_link->entity;
+    entity_iterator_t *it = system_get_entity_iterator(system);
+    sfTime *total_time = system_get_context(system, sfTime);
 
-        sfTime *total_time = system->context;
-        ui_element_t *timer_ui = entity_get_component(entity, UI_LINK_COMPONENT_TYPE)->data;
+    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
+        ui_element_t *timer_ui = component_get_data(entity_get_component(entity, UI_LINK_COMPONENT_TYPE), ui_element_t);
 
         total_time->microseconds += elapsed_time->microseconds;
 
@@ -32,13 +31,14 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
                 '\0'
         };
 
-         ui_element_set_text(timer_ui, text);
+        ui_element_set_text(timer_ui, text);
     }
+    entity_iterator_destroy(it);
 }
 
 static void destroy_handler(system_t *system)
 {
-    free(SYSTEM_CONTEXT(system, sfTime));
+    free(system_get_raw_context(system));
 }
 
 system_t *timer_system_create(void)

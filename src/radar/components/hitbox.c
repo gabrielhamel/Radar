@@ -5,7 +5,7 @@
 
 static void hitbox_component_destroy(component_t *component)
 {
-    hitbox_component_t *data = COMPONENT_DATA(component, hitbox_component_t);
+    hitbox_component_t *data = component_get_data(component, hitbox_component_t);
 
     if (data->type == RECT) {
         sfRectangleShape_destroy(data->csfml_object);
