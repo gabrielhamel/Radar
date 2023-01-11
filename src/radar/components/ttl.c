@@ -1,11 +1,13 @@
 #include <stdlib.h>
 
-#include "engine/ecs/component.h"
-#include "radar/components/ttl.h"
+#include <engine/ecs/component.h>
+
+#include <radar/components/ttl.h>
 
 static void ttl_component_destroy(component_t *component)
 {
-    free(component_get_raw_data(component));
+    void *data = component_get_raw_data(component);
+    free(data);
 }
 
 component_t *ttl_component_create(float remaining_time)

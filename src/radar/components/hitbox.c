@@ -1,7 +1,8 @@
 #include <stdlib.h>
+
 #include <SFML/Graphics.h>
 
-#include "radar/components/hitbox.h"
+#include <radar/components/hitbox.h>
 
 static void hitbox_component_destroy(component_t *component)
 {

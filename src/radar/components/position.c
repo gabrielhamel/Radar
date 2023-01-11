@@ -1,11 +1,13 @@
 #include <stdlib.h>
 
-#include "engine/ecs/component.h"
-#include "radar/components/position.h"
+#include <engine/ecs/component.h>
+
+#include <radar/components/position.h>
 
 static void position_component_destroy(component_t *component)
 {
-    free(component_get_raw_data(component));
+    void *data = component_get_raw_data(component);
+    free(data);
 }
 
 component_t *position_component_create(sfVector2f position)

@@ -1,6 +1,6 @@
 #include <SFML/Audio.h>
 
-#include "radar/components/music.h"
+#include <radar/components/music.h>
 
 static void music_component_destroy(component_t *component)
 {

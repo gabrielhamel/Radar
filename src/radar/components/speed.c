@@ -1,11 +1,12 @@
 #include <stdlib.h>
 
-#include "radar/components/speed.h"
-#include "engine/ecs/component.h"
+#include <radar/components/speed.h>
+#include <engine/ecs/component.h>
 
 static void speed_component_destroy(component_t *component)
 {
-    free(component_get_raw_data(component));
+    void *data = component_get_raw_data(component);
+    free(data);
 }
 
 component_t *speed_component_create(sfVector2f speed)

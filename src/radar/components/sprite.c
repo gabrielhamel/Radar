@@ -1,13 +1,14 @@
 #include <stdlib.h>
 
-#include "radar/components/sprite.h"
-#include "engine/ecs/component.h"
+#include <radar/components/sprite.h>
+#include <engine/ecs/component.h>
 
 static void sprite_component_destroy(component_t *component)
 {
-    sfSprite_destroy(component_get_data(component, sprite_component_t)->sprite);
-    sfTexture_destroy(component_get_data(component, sprite_component_t)->texture);
-    free(component_get_raw_data(component));
+    sprite_component_t *data = component_get_data(component, sprite_component_t);
+    sfSprite_destroy(data->sprite);
+    sfTexture_destroy(data->texture);
+    free(data);
 }
 
 component_t *sprite_component_create_from_file(const char *filepath, sprite_params_t params)
