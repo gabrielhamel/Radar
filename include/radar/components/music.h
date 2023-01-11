@@ -1,7 +1,7 @@
 #ifndef RADAR_MUSIC_COMPONENT_H
 #define RADAR_MUSIC_COMPONENT_H
 
-#include "engine/ecs/component.h"
+#include <engine/ecs/component.h>
 
 #define MUSIC_COMPONENT_TYPE 7
 

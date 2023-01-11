@@ -7,6 +7,9 @@
 
 typedef struct entity_t entity_t;
 
+#define entity_get_component_data(entity, component_type, data_type) \
+    (component_get_data(entity_get_component(entity, component_type), data_type))
+
 typedef struct {
     entity_t *current;
 } entity_iterator_t;

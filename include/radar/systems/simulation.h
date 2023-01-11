@@ -1,9 +1,10 @@
 #ifndef RADAR_SIMULATION_SYSTEM_H
 #define RADAR_SIMULATION_SYSTEM_H
 
-#include "engine/ecs/scene.h"
-#include "engine/ecs/system.h"
-#include "radar/parser.h"
+#include <engine/ecs/scene.h>
+#include <engine/ecs/system.h>
+
+#include <radar/parser.h>
 
 #define SIMULATION_SYSTEM_TYPE 5
 

@@ -1,7 +1,7 @@
 #ifndef RADAR_MOVEMENT_SYSTEM_H
 #define RADAR_MOVEMENT_SYSTEM_H
 
-#include "engine/ecs/system.h"
+#include <engine/ecs/system.h>
 
 #define MOVEMENT_SYSTEM_TYPE 2
 

@@ -1,7 +1,6 @@
 #ifndef RADAR_PARSER_H
 #define RADAR_PARSER_H
 
-#include <stdio.h>
 #include <engine/tools/lists.h>
 
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof(*x))

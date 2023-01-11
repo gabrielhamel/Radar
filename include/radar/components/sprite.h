@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.h>
 
-#include "engine/ecs/component.h"
+#include <engine/ecs/component.h>
 
 #define SPRITE_COMPONENT_TYPE 3
 

@@ -3,7 +3,7 @@
 
 #include <SFML/System/Vector2.h>
 
-#include "engine/ecs/component.h"
+#include <engine/ecs/component.h>
 
 #define POSITION_COMPONENT_TYPE 1
 

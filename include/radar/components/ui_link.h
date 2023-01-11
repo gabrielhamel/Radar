@@ -1,8 +1,8 @@
 #ifndef RADAR_UI_LINK_COMPONENT_H
 #define RADAR_UI_LINK_COMPONENT_H
 
-#include "engine/ui/element.h"
-#include "engine/ecs/component.h"
+#include <engine/ui/element.h>
+#include <engine/ecs/component.h>
 
 #define UI_LINK_COMPONENT_TYPE 4
 

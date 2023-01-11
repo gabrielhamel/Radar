@@ -1,13 +1,12 @@
-#include "radar/systems/sprite_drawer.h"
-#include "radar/components/sprite.h"
+#include <radar/systems/sprite_drawer.h>
+#include <radar/components/sprite.h>
 
 static void render_handler(system_t *system, sfRenderWindow *window)
 {
     entity_iterator_t *it = system_get_entity_iterator(system);
-
     for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
-        sprite_component_t *sprite_c = component_get_data(entity_get_component(entity, SPRITE_COMPONENT_TYPE), sprite_component_t);
-        sfRenderWindow_drawSprite(window, sprite_c->sprite, NULL);
+        sprite_component_t *sprite = entity_get_component_data(entity, SPRITE_COMPONENT_TYPE, sprite_component_t);
+        sfRenderWindow_drawSprite(window, sprite->sprite, NULL);
     }
     entity_iterator_destroy(it);
 }

@@ -1,37 +1,40 @@
 #include <stdlib.h>
 
-#include "engine/text/unicode.h"
+#include <engine/text/unicode.h>
 
-#include "radar/systems/timer.h"
-#include "radar/components/ui_link.h"
+#include <radar/systems/timer.h>
+#include <radar/components/ui_link.h>
+
+static void update_timer(entity_t *entity, unsigned int hours, unsigned int minutes, unsigned int seconds)
+{
+    ui_element_t *timer = entity_get_component_data(entity, UI_LINK_COMPONENT_TYPE, ui_element_t);
+
+    sfUint32 text[] = {
+            '0' + hours / 10,
+            '0' + hours % 10,
+            ':',
+            '0' + minutes / 10,
+            '0' + minutes % 10,
+            ':',
+            '0' + seconds / 10,
+            '0' + seconds % 10,
+            '\0'
+    };
+
+    ui_element_set_text(timer, text);
+}
 
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    entity_iterator_t *it = system_get_entity_iterator(system);
     sfTime *total_time = system_get_context(system, sfTime);
+    total_time->microseconds += elapsed_time->microseconds;
+    unsigned int hours = total_time->microseconds / 3600000000;
+    unsigned int minutes = total_time->microseconds % 3600000000 / 60000000;
+    unsigned int seconds = total_time->microseconds % 3600000000 % 60000000 / 1000000;
 
+    entity_iterator_t *it = system_get_entity_iterator(system);
     for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
-        ui_element_t *timer_ui = component_get_data(entity_get_component(entity, UI_LINK_COMPONENT_TYPE), ui_element_t);
-
-        total_time->microseconds += elapsed_time->microseconds;
-
-        unsigned int hours = total_time->microseconds / 3600000000;
-        unsigned int minutes = total_time->microseconds % 3600000000 / 60000000;
-        unsigned int seconds = total_time->microseconds % 3600000000 % 60000000 / 1000000;
-
-        sfUint32 text[] = {
-                '0' + hours / 10,
-                '0' + hours % 10,
-                ':',
-                '0' + minutes / 10,
-                '0' + minutes % 10,
-                ':',
-                '0' + seconds / 10,
-                '0' + seconds % 10,
-                '\0'
-        };
-
-        ui_element_set_text(timer_ui, text);
+        update_timer(entity, hours, minutes, seconds);
     }
     entity_iterator_destroy(it);
 }

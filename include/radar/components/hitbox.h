@@ -1,8 +1,7 @@
 #ifndef RADAR_HITBOX_COMPONENT_H
 #define RADAR_HITBOX_COMPONENT_H
 
-#include <SFML/System.h>
-#include "engine/ecs/component.h"
+#include <engine/ecs/component.h>
 
 #define HITBOX_COMPONENT_TYPE 5
 

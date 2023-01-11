@@ -35,7 +35,10 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/systems/simulation.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/timer.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/movement.c
-    ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/hitbox.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/rect.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/circle.c
+    ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/custom.c
     ${PROJECT_SOURCE_DIR}/src/radar/musics/ambiance.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/engine.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/scene.c

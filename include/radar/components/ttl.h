@@ -1,9 +1,7 @@
 #ifndef RADAR_TTL_COMPONENT_H
 #define RADAR_TTL_COMPONENT_H
 
-#include <SFML/System.h>
-
-#include "engine/ecs/component.h"
+#include <engine/ecs/component.h>
 
 #define TTL_COMPONENT_TYPE 6
 

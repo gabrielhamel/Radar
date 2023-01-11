@@ -1,8 +1,7 @@
 #ifndef RADAR_SPRITE_DRAWER_SYSTEM_H
 #define RADAR_SPRITE_DRAWER_SYSTEM_H
 
-#include <SFML/Graphics.h>
-#include "engine/ecs/system.h"
+#include <engine/ecs/system.h>
 
 #define SPRITE_DRAWER_SYSTEM_TYPE 1
 
