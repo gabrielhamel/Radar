@@ -41,6 +41,7 @@ static bool aircraft_is_under_tower(system_t *system, entity_t *aircraft, hitbox
         }
         if (rect_intersect_circle(tested, candidate)) {
             // Plane is under the tower
+            entity_iterator_destroy(it);
             return true;
         }
     }
@@ -77,7 +78,7 @@ static void custom_hitbox_collision(system_t *system, hitbox_component_t *tested
             continue;
         }
         if (custom_intersect_custom(tested, candidate)) {
-            printf("Intersection\n", tested->point_count, candidate->point_count);
+            printf("Intersection\n");
             fflush(stdout);
         }
     }

@@ -1,5 +1,4 @@
-#include <stdlib.h>
-
+#include <engine/tools/maths.h>
 #include <radar/systems/hitbox.h>
 
 static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b1, sfVector2f b2)
