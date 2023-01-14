@@ -9,7 +9,6 @@ system_t *system_create(system_type_t type, system_params_t params)
     system->type = type;
     system->context = params.context;
     system->update_handler = params.update_handler;
-    system->render_handler = params.render_handler;
     system->destroy_handler = params.destroy_handler;
     TAILQ_INIT(&system->entities_subscribed);
     return system;

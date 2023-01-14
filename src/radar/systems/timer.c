@@ -51,7 +51,6 @@ system_t *timer_system_create(void)
     return system_create(TIMER_SYSTEM_TYPE, (system_params_t){
         .context = elapsed_time,
         .update_handler = update_handler,
-        .render_handler = NULL,
         .destroy_handler = destroy_handler
     });
 }

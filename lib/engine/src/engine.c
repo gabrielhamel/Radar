@@ -13,6 +13,11 @@ engine_t *engine_get(void)
     return instance;
 }
 
+sfRenderWindow *engine_get_window(engine_t *engine)
+{
+    return engine->window;
+}
+
 static sfRenderWindow *engine_window_create(engine_params_t params)
 {
     sfVideoMode mode = {params.width, params.height, 32};
@@ -75,10 +80,9 @@ void engine_run(engine_t *engine)
             scene_handle_event(engine->scene, &engine->event);
         }
         engine->elapsed_time = sfClock_restart(engine->clock);
+        sfRenderWindow_clear(engine->window, sfWhite);
         scene_systems_update(engine->scene, &engine->elapsed_time);
         ui_element_update(engine->scene->ui_element_root, &engine->elapsed_time);
-        sfRenderWindow_clear(engine->window, sfWhite);
-        scene_systems_render(engine->scene, engine->window);
         scene_ui_render(engine->scene, engine->window);
         sfRenderWindow_display(engine->window);
         if (engine->scene->closed) {

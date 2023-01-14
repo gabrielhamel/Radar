@@ -13,7 +13,6 @@ typedef int system_type_t;
 typedef struct {
     void *context;
     void (*update_handler)(system_t *, sfTime *);
-    void (*render_handler)(system_t *, sfRenderWindow *);
     void (*destroy_handler)(system_t *);
 } system_params_t;
 

@@ -70,7 +70,6 @@ system_t *simulation_system_create(scene_t *scene, sfTime *timer, radar_definiti
     return system_create(SIMULATION_SYSTEM_TYPE, (system_params_t){
         .context = simulation,
         .update_handler = update_handler,
-        .render_handler = NULL,
         .destroy_handler = destroy_handler,
     });
 }

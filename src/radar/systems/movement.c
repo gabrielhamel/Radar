@@ -46,7 +46,6 @@ system_t *movement_system_create(void)
 {
     return system_create(MOVEMENT_SYSTEM_TYPE, (system_params_t){
         .context = NULL,
-        .render_handler = NULL,
         .update_handler = update_handler,
         .destroy_handler = NULL
     });

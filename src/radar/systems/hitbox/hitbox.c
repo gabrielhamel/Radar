@@ -2,32 +2,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <engine/engine.h>
 #include <engine/ecs/scene.h>
 #include <radar/systems/hitbox.h>
 #include <radar/components/hitbox.h>
 
-static void render_handler(system_t *system, sfRenderWindow *window)
+static void entity_render(system_t *system, entity_t *entity, sfRenderWindow *window, bool *enabled)
 {
-    entity_iterator_t *it = system_get_entity_iterator(system);
+    hitbox_component_t *hitbox = entity_get_component_data(entity, HITBOX_COMPONENT_TYPE, hitbox_component_t);
 
-    for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
-        hitbox_component_t *hitbox = entity_get_component_data(entity, HITBOX_COMPONENT_TYPE, hitbox_component_t);
-
-        if (hitbox->type == CUSTOM) {
-            sfRenderWindow_drawConvexShape(window, hitbox->csfml_object, NULL);
-        }
-
-        if (!*((bool *)system_get_context(system, bool))) {
-            continue;
-        }
-
-        if (hitbox->type == CIRCLE) {
-            sfRenderWindow_drawCircleShape(window, hitbox->csfml_object, NULL);
-        } else if (hitbox->type == RECT) {
-            sfRenderWindow_drawRectangleShape(window, hitbox->csfml_object, NULL);
-        }
+    if (hitbox->type == CUSTOM) {
+        sfRenderWindow_drawConvexShape(window, hitbox->csfml_object, NULL);
     }
-    entity_iterator_destroy(it);
+
+    if (!*enabled) {
+        return;
+    }
+
+    if (hitbox->type == CIRCLE) {
+        sfRenderWindow_drawCircleShape(window, hitbox->csfml_object, NULL);
+    } else if (hitbox->type == RECT) {
+        sfRenderWindow_drawRectangleShape(window, hitbox->csfml_object, NULL);
+    }
 }
 
 static bool aircraft_is_under_tower(system_t *system, entity_t *aircraft, hitbox_component_t *tested)
@@ -87,8 +83,16 @@ static void custom_hitbox_collision(system_t *system, hitbox_component_t *tested
 
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
-    entity_iterator_t *it = system_get_entity_iterator(system);
+    static sfRenderWindow *window = NULL;
+    if (!window) {
+        window = engine_get_window(engine_get());
+    }
+    static bool *enabled = NULL;
+    if (!enabled) {
+        enabled = system_get_context(system, bool);
+    }
 
+    entity_iterator_t *it = system_get_entity_iterator(system);
     for (entity_t *entity = it->current; entity; entity = entity_iterator_next(it)) {
         hitbox_component_t *hitbox_tested = entity_get_component_data(entity, HITBOX_COMPONENT_TYPE, hitbox_component_t);
         if (hitbox_tested->type == RECT && !aircraft_is_under_tower(system, entity, hitbox_tested)) {
@@ -97,6 +101,7 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
         if (hitbox_tested->type == CUSTOM) {
             custom_hitbox_collision(system, hitbox_tested);
         }
+        entity_render(system, entity, window, enabled);
     }
     entity_iterator_destroy(it);
 
@@ -125,7 +130,6 @@ system_t *hitbox_system_create(void)
     data->crashed_aircrafts = entity_set_create();
     return system_create(HITBOX_SYSTEM_TYPE, (system_params_t){
         .context = data,
-        .render_handler = render_handler,
         .update_handler = update_handler,
         .destroy_handler = destroy_handler
     });

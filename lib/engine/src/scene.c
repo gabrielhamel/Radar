@@ -31,16 +31,6 @@ void scene_append_entity(scene_t *scene, entity_t *entity)
     TAILQ_INSERT_TAIL(&scene->entities, entity, entry);
 }
 
-void scene_remove_entity(scene_t *scene, entity_t *entity)
-{
-    system_t *system = NULL;
-    TAILQ_FOREACH(system, &scene->systems, entry) {
-        system_unsubscribe_entity(system, entity);
-    }
-    TAILQ_REMOVE(&scene->entities, entity, entry);
-    entity_destroy(entity);
-}
-
 void scene_destroy_entity(scene_t *scene, entity_t *entity)
 {
     system_t *system = NULL;
@@ -84,17 +74,6 @@ void scene_systems_update(scene_t *scene, sfTime *elapsed_time)
     TAILQ_FOREACH(it, &scene->systems, entry) {
         if (it->update_handler) {
             it->update_handler(it, elapsed_time);
-        }
-    }
-}
-
-void scene_systems_render(scene_t *scene, sfRenderWindow *window)
-{
-    system_t *it = NULL;
-
-    TAILQ_FOREACH(it, &scene->systems, entry) {
-        if (it->render_handler) {
-            it->render_handler(it, window);
         }
     }
 }

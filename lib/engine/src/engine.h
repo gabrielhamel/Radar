@@ -23,6 +23,7 @@ typedef struct {
 } engine_t;
 
 engine_t *engine_get(void);
+sfRenderWindow *engine_get_window(engine_t *engine);
 bool engine_init(engine_t *engine, engine_params_t params);
 void engine_destroy(engine_t *);
 void engine_run(engine_t *engine);
