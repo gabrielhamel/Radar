@@ -1,7 +1,5 @@
 #include <stdlib.h>
 
-#include <engine/ecs/component.h>
-
 #include <radar/components/ttl.h>
 
 static void ttl_component_destroy(component_t *component)

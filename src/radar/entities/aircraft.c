@@ -1,19 +1,17 @@
-#ifdef WIN32
-#define _USE_MATH_DEFINES
-#endif
-
-#include <math.h>
+#include <engine/tools/maths.h>
+#include <engine/render/component.h>
+#include <engine/render/system.h>
 
 #include "radar/components/position.h"
 #include "radar/components/speed.h"
-#include "radar/components/sprite.h"
 #include "radar/components/hitbox.h"
 #include "radar/components/ttl.h"
 #include "radar/entities/aircraft.h"
 #include "radar/systems/movement.h"
 #include "radar/systems/simulation.h"
-#include "radar/systems/sprite_drawer.h"
 #include "radar/systems/hitbox.h"
+#include "radar/tools/sprite.h"
+#include "radar/entities/hitbox.h"
 
 static entity_t *aircraft_create_from_definition(radar_entity_definition_t *definition)
 {
@@ -31,14 +29,17 @@ static entity_t *aircraft_create_from_definition(radar_entity_definition_t *defi
         cos(angle) * (float)definition->args[4],
         sin(angle) * (float)definition->args[4]
     });
-    component_t *sprite = sprite_component_create_from_file("./assets/aircraft.png", (sprite_params_t){
+
+    sfSprite *sprite = sprite_create_from_file("./assets/aircraft.png", (sprite_params_t){
         .position = component_get_data(position, position_component_t)->position,
         .origin = CENTER
     });
-    component_t *hitbox = hitbox_rect_component_create((sfVector2f){
-        definition->args[0],
-        definition->args[1]
-    });
+
+    system_t *hitbox_system = scene_get_system(scene_get(), HITBOX_SYSTEM_TYPE);
+    bool render_enabled = system_get_context(hitbox_system, hitbox_system_t)->render_enabled;
+
+    sfRectangleShape *hitbox_rect = render_rect_create(component_get_data(position, position_component_t)->position, render_enabled);
+    component_t *hitbox = hitbox_rect_component_create();
 
     float alive_time = vector.x /
             component_get_data(speed, speed_component_t)->speed.x;
@@ -48,11 +49,15 @@ static entity_t *aircraft_create_from_definition(radar_entity_definition_t *defi
     }
     component_t *ttl = ttl_component_create(alive_time);
 
-    sfSprite_setRotation(component_get_data(sprite, sprite_component_t)->sprite, angle * 180.0 / M_PI);
+    sfSprite_setRotation(sprite, angle * 180.0 / M_PI);
+
+    component_t *render = render_component_create();
+    render_component_append_object(render, SPRITE, sprite, SPRITE_RENDER_ID);
+    render_component_append_object(render, RECTANGLE_SHAPE, hitbox_rect, HITBOX_RENDER_ID);
 
     entity_assign_component(aircraft, position);
     entity_assign_component(aircraft, speed);
-    entity_assign_component(aircraft, sprite);
+    entity_assign_component(aircraft, render);
     entity_assign_component(aircraft, hitbox);
     entity_assign_component(aircraft, ttl);
     return aircraft;
@@ -63,7 +68,7 @@ void aircraft_scene_append(scene_t *scene, radar_entity_definition_t *definition
     entity_t *aircraft = aircraft_create_from_definition(definition);
     scene_append_entity(scene, aircraft);
 
-    system_subscribe_entity(scene_get_system(scene, SPRITE_DRAWER_SYSTEM_TYPE), aircraft);
+    system_subscribe_entity(scene_get_system(scene, RENDER_SYSTEM_TYPE), aircraft);
     system_subscribe_entity(scene_get_system(scene, MOVEMENT_SYSTEM_TYPE), aircraft);
     system_subscribe_entity(scene_get_system(scene, HITBOX_SYSTEM_TYPE), aircraft);
     system_subscribe_entity(scene_get_system(scene, SIMULATION_SYSTEM_TYPE), aircraft);

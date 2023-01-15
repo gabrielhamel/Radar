@@ -1,10 +1,12 @@
 #include <SFML/Audio.h>
+
+#include <engine/render/component.h>
+#include <engine/render/system.h>
+
 #include "radar/simulation.h"
 #include "radar/parser.h"
 #include "radar/entities/tower.h"
-#include "radar/systems/sprite_drawer.h"
 #include "radar/systems/simulation.h"
-#include "radar/components/sprite.h"
 #include "radar/systems/movement.h"
 #include "radar/systems/hitbox.h"
 #include "radar/components/ui_link.h"
@@ -12,18 +14,26 @@
 #include "radar/entities/timer.h"
 #include "radar/entities/storm.h"
 #include "radar/musics.h"
+#include "radar/tools/sprite.h"
 
 static void simulation_load_background(scene_t *scene)
 {
     entity_t *background = entity_create();
-    entity_assign_component(background, sprite_component_create_from_file("assets/background.png",
-                                                                          (sprite_params_t){
-                                                                                  .position = (sfVector2f){0},
-                                                                                  .origin = TOP_LEFT
-                                                                          }));
 
+    sfSprite *sprite = sprite_create_from_file(
+            "assets/background.png",
+            (sprite_params_t){
+                    .position = (sfVector2f){0},
+                    .origin = TOP_LEFT
+            }
+    );
+
+    component_t *render = render_component_create();
+    render_component_append_object(render, SPRITE, sprite, BACKGROUND_RENDER_ID);
+
+    entity_assign_component(background, render);
     scene_append_entity(scene, background);
-    system_subscribe_entity(scene_get_system(scene, SPRITE_DRAWER_SYSTEM_TYPE), background);
+    system_subscribe_entity(scene_get_system(scene, RENDER_SYSTEM_TYPE), background);
 }
 
 static radar_definition_t *simulation_load_entities(scene_t *scene, const char *filepath)
@@ -58,8 +68,6 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
 
     system_t *hitbox_system = hitbox_system_create();
     scene_append_system(scene, hitbox_system);
-
-    scene_append_system(scene, sprite_drawer_system_create());
 
     simulation_load_background(scene);
 

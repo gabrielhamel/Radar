@@ -1,30 +1,8 @@
+#include <engine/render/component.h>
+
 #include <radar/systems/movement.h>
 #include <radar/components/position.h>
 #include <radar/components/speed.h>
-#include <radar/components/hitbox.h>
-#include <radar/components/sprite.h>
-
-static void update_hitbox(entity_t *entity, position_component_t *position)
-{
-    hitbox_component_t *hitbox = entity_get_component_data(entity, HITBOX_COMPONENT_TYPE, hitbox_component_t);
-    if (hitbox) {
-        if (hitbox->type == RECT) {
-            sfRectangleShape_setPosition(hitbox->csfml_object, position->position);
-        } else if (hitbox->type == CIRCLE) {
-            sfCircleShape_setPosition(hitbox->csfml_object, position->position);
-        } else if (hitbox->type == CUSTOM) {
-            sfConvexShape_setPosition(hitbox->csfml_object, position->position);
-        }
-    }
-}
-
-static void update_sprite(entity_t *entity, position_component_t *position)
-{
-    sprite_component_t *sprite = entity_get_component_data(entity, SPRITE_COMPONENT_TYPE, sprite_component_t);
-    if (sprite) {
-        sfSprite_setPosition(sprite->sprite, position->position);
-    }
-}
 
 static void update_handler(system_t *system, sfTime *elapsed_time)
 {
@@ -36,8 +14,10 @@ static void update_handler(system_t *system, sfTime *elapsed_time)
         position->position.x += speed_c->speed.x * sfTime_asSeconds(*elapsed_time);
         position->position.y += speed_c->speed.y * sfTime_asSeconds(*elapsed_time);
 
-        update_sprite(entity, position);
-        update_hitbox(entity, position);
+        component_t *render = entity_get_component(entity, RENDER_COMPONENT_TYPE);
+        if (render) {
+            render_component_set_position(render, position->position);
+        }
     }
     entity_iterator_destroy(it);
 }

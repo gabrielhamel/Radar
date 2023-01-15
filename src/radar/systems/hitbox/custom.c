@@ -1,5 +1,7 @@
 #include <engine/tools/maths.h>
 #include <radar/systems/hitbox.h>
+#include <radar/components/hitbox.h>
+#include <radar/components/position.h>
 
 static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b1, sfVector2f b2)
 {
@@ -32,41 +34,44 @@ static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b
     return intersect_x >= s_min && intersect_x <= s_max;
 }
 
-bool custom_intersect_custom(hitbox_component_t *a, hitbox_component_t *b)
+bool custom_intersect_custom(entity_t *a, entity_t *b)
 {
-    sfVector2f pos_a = sfConvexShape_getPosition(a->csfml_object);
-    sfVector2f pos_b = sfConvexShape_getPosition(b->csfml_object);
+    sfVector2f pos_a = entity_get_component_data(a, POSITION_COMPONENT_TYPE, position_component_t)->position;
+    sfVector2f pos_b = entity_get_component_data(b, POSITION_COMPONENT_TYPE, position_component_t)->position;
 
-    for (size_t it_a = 0; it_a < a->point_count - 1; it_a++) {
-        for (size_t it_b = 0; it_b < b->point_count - 1; it_b++) {
+    hitbox_component_t *a_h = entity_get_component_data(a, HITBOX_COMPONENT_TYPE, hitbox_component_t);
+    hitbox_component_t *b_h = entity_get_component_data(b, HITBOX_COMPONENT_TYPE, hitbox_component_t);
+
+    for (size_t it_a = 0; it_a < a_h->point_count - 1; it_a++) {
+        for (size_t it_b = 0; it_b < b_h->point_count - 1; it_b++) {
             if (segment_intersect_segment(
-                    (sfVector2f){a->points[it_a].x + pos_a.x, a->points[it_a].y + pos_a.y},
-                    (sfVector2f){a->points[it_a + 1].x + pos_a.x, a->points[it_a + 1].y + pos_a.y},
-                    (sfVector2f){b->points[it_b].x + pos_b.x, b->points[it_b].y + pos_b.y},
-                    (sfVector2f){b->points[it_b + 1].x + pos_b.x, b->points[it_b + 1].y + pos_b.y}
+                    (sfVector2f){a_h->points[it_a].x + pos_a.x, a_h->points[it_a].y + pos_a.y},
+                    (sfVector2f){a_h->points[it_a + 1].x + pos_a.x, a_h->points[it_a + 1].y + pos_a.y},
+                    (sfVector2f){b_h->points[it_b].x + pos_b.x, b_h->points[it_b].y + pos_b.y},
+                    (sfVector2f){b_h->points[it_b + 1].x + pos_b.x, b_h->points[it_b + 1].y + pos_b.y}
             )) {
                 return true;
             }
         }
     }
     // Last a segment
-    for (size_t it_b = 0; it_b < b->point_count - 1; it_b++) {
+    for (size_t it_b = 0; it_b < b_h->point_count - 1; it_b++) {
         if (segment_intersect_segment(
-                (sfVector2f){a->points[a->point_count - 1].x + pos_a.x, a->points[a->point_count - 1].y + pos_a.y},
-                (sfVector2f){a->points[0].x + pos_a.x, a->points[0].y + pos_a.y},
-                (sfVector2f){b->points[it_b].x + pos_b.x, b->points[it_b].y + pos_b.y},
-                (sfVector2f){b->points[it_b + 1].x + pos_b.x, b->points[it_b + 1].y + pos_b.y}
+                (sfVector2f){a_h->points[a_h->point_count - 1].x + pos_a.x, a_h->points[a_h->point_count - 1].y + pos_a.y},
+                (sfVector2f){a_h->points[0].x + pos_a.x, a_h->points[0].y + pos_a.y},
+                (sfVector2f){b_h->points[it_b].x + pos_b.x, b_h->points[it_b].y + pos_b.y},
+                (sfVector2f){b_h->points[it_b + 1].x + pos_b.x, b_h->points[it_b + 1].y + pos_b.y}
         )) {
             return true;
         }
     }
     // Last b segment
-    for (size_t it_a = 0; it_a < a->point_count - 1; it_a++) {
+    for (size_t it_a = 0; it_a < a_h->point_count - 1; it_a++) {
         if (segment_intersect_segment(
-                (sfVector2f){a->points[it_a].x + pos_a.x, a->points[it_a].y + pos_a.y},
-                (sfVector2f){a->points[it_a + 1].x + pos_a.x, a->points[it_a + 1].y + pos_a.y},
-                (sfVector2f){b->points[b->point_count - 1].x + pos_b.x, b->points[b->point_count - 1].y + pos_b.y},
-                (sfVector2f){b->points[0].x + pos_b.x, b->points[0].y + pos_b.y}
+                (sfVector2f){a_h->points[it_a].x + pos_a.x, a_h->points[it_a].y + pos_a.y},
+                (sfVector2f){a_h->points[it_a + 1].x + pos_a.x, a_h->points[it_a + 1].y + pos_a.y},
+                (sfVector2f){b_h->points[b_h->point_count - 1].x + pos_b.x, b_h->points[b_h->point_count - 1].y + pos_b.y},
+                (sfVector2f){b_h->points[0].x + pos_b.x, b_h->points[0].y + pos_b.y}
         )) {
             return true;
         }

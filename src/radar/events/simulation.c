@@ -1,8 +1,12 @@
 #include <SFML/Graphics.h>
 
-#include "engine/ecs/scene.h"
+#include <engine/ecs/scene.h>
+#include <engine/render/component.h>
+
 #include "radar/systems/hitbox.h"
 #include "radar/components/hitbox.h"
+#include "radar/entities/storm.h"
+#include "radar/entities/aircraft.h"
 
 static void quit_simulation()
 {
@@ -20,11 +24,27 @@ static void toogle_hitbox(system_t *hitbox_system)
     while (entity) {
         component_t *hitbox_c = entity_get_component(entity, HITBOX_COMPONENT_TYPE);
         hitbox_component_t *hitbox = component_get_data(hitbox_c, hitbox_component_t);
+        component_t *render = entity_get_component(entity, RENDER_COMPONENT_TYPE);
         if (hitbox->type == CUSTOM) {
+            sfConvexShape *shape = render_component_get_raw_csfml_object(render, CONVEX_SHAPE_RENDER_ID);
             if (context->render_enabled) {
-                sfConvexShape_setOutlineThickness(hitbox->csfml_object, 2);
+                sfConvexShape_setOutlineThickness(shape, 2);
             } else {
-                sfConvexShape_setOutlineThickness(hitbox->csfml_object, 0);
+                sfConvexShape_setOutlineThickness(shape, 0);
+            }
+        } else if (hitbox->type == RECT) {
+            sfRectangleShape *shape = render_component_get_raw_csfml_object(render, HITBOX_RENDER_ID);
+            if (context->render_enabled) {
+                sfRectangleShape_setOutlineThickness(shape, 2);
+            } else {
+                sfRectangleShape_setOutlineThickness(shape, 0);
+            }
+        } else if (hitbox->type == CIRCLE) {
+            sfCircleShape *shape = render_component_get_raw_csfml_object(render, HITBOX_RENDER_ID);
+            if (context->render_enabled) {
+                sfCircleShape_setOutlineThickness(shape, 2);
+            } else {
+                sfCircleShape_setOutlineThickness(shape, 0);
             }
         }
         entity = entity_iterator_next(it);

@@ -1,24 +1,26 @@
 #include <radar/systems/hitbox.h>
+#include <radar/components/hitbox.h>
+#include <radar/components/position.h>
 
-bool rect_intersect_rect(hitbox_component_t *a, hitbox_component_t *b)
+bool rect_intersect_rect(entity_t *a, entity_t *b)
 {
-    sfRectangleShape *shape_tested = a->csfml_object;
-    sfRectangleShape *shape_checked = b->csfml_object;
+    sfVector2f shape_tested = entity_get_component_data(a, POSITION_COMPONENT_TYPE, position_component_t)->position;
+    sfVector2f shape_checked = entity_get_component_data(b, POSITION_COMPONENT_TYPE, position_component_t)->position;
 
-    const sfFloatRect rect_tested = sfRectangleShape_getGlobalBounds(shape_tested);
-    const sfFloatRect rect_checked = sfRectangleShape_getGlobalBounds(shape_checked);
+    const sfFloatRect rect_tested = (sfFloatRect){shape_tested.x, shape_tested.y, 20, 20};
+    const sfFloatRect rect_checked = (sfFloatRect){shape_checked.x, shape_checked.y, 20, 20};
 
     return sfFloatRect_intersects(
-            &rect_tested,
-            &rect_checked,
-            NULL
+        &rect_tested,
+        &rect_checked,
+        NULL
     );
 }
 
-bool rect_intersect_circle(hitbox_component_t *rect, hitbox_component_t *circle)
+bool rect_intersect_circle(entity_t *rect, entity_t *circle)
 {
-    sfRectangleShape *aircraft_shape = rect->csfml_object;
-    sfFloatRect aircraft_rect = sfRectangleShape_getGlobalBounds(aircraft_shape);
+    sfVector2f aircraft_pos = entity_get_component_data(rect, POSITION_COMPONENT_TYPE, position_component_t)->position;
+    sfFloatRect aircraft_rect = (sfFloatRect){aircraft_pos.x, aircraft_pos.y, 20, 20};
 
     if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.left, aircraft_rect.top})) {
         return true;

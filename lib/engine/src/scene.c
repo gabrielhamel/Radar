@@ -2,6 +2,12 @@
 
 #include "engine.h"
 #include "ecs/scene.h"
+#include "render/system.h"
+
+static void scene_insert_default_systems(scene_t *scene)
+{
+    scene_append_system(scene, render_system_create());
+}
 
 scene_t *scene_create(void)
 {
@@ -18,6 +24,7 @@ scene_t *scene_create(void)
         window_size.x,
         window_size.y
     });
+    scene_insert_default_systems(scene);
     return scene;
 }
 

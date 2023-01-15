@@ -13,9 +13,9 @@ typedef struct {
 } hitbox_system_t;
 
 system_t *hitbox_system_create(void);
-bool custom_intersect_custom(hitbox_component_t *a, hitbox_component_t *b);
-bool rect_intersect_rect(hitbox_component_t *a, hitbox_component_t *b);
-bool point_intersect_circle(hitbox_component_t *circle, sfVector2f point);
-bool rect_intersect_circle(hitbox_component_t *rect, hitbox_component_t *circle);
+bool custom_intersect_custom(entity_t *a, entity_t *b);
+bool rect_intersect_rect(entity_t *a, entity_t *b);
+bool point_intersect_circle(entity_t *circle, sfVector2f point);
+bool rect_intersect_circle(entity_t *rect, entity_t *circle);
 
 #endif // RADAR_HITBOX_SYSTEM_H

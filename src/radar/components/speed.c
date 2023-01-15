@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include <radar/components/speed.h>
-#include <engine/ecs/component.h>
 
 static void speed_component_destroy(component_t *component)
 {

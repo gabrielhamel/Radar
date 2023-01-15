@@ -3,7 +3,7 @@
 
 #include "../queue.h"
 
-#define COMPONENT_DATA(component, data_type) (component ? (data_type *)component->data : NULL)
+#define component_get_data(component, type) ((type *)component_get_raw_data(component))
 
 typedef int component_type_t;
 

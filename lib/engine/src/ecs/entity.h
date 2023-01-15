@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include "component.h"
 
+#define entity_get_component_data(entity, component_type, data_type) \
+    (component_get_data(entity_get_component(entity, component_type), data_type))
+
 typedef struct entity_s {
     TAILQ_ENTRY(entity_s) entry;
     TAILQ_HEAD(, component_s) components;
