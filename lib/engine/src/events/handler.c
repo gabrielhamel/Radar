@@ -41,5 +41,7 @@ void eh_handle_event(events_handler_t *handler, sfEvent *event)
             break;
         case sfEvtClosed:
             eh_exec_window_closed(handler, event);
+        default:
+            return;
     }
 }
