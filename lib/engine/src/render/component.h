@@ -1,5 +1,5 @@
-#ifndef ENGINE_RENDER_COMPONENT_H
-#define ENGINE_RENDER_COMPONENT_H
+#ifndef _ENGINE_RENDER_COMPONENT_H
+#define _ENGINE_RENDER_COMPONENT_H
 
 #include <limits.h>
 #include <stdbool.h>
@@ -59,4 +59,4 @@ void render_component_set_position(component_t *component, sfVector2f position);
 void sprite_destroy(sfSprite *sprite);
 void convex_shape_destroy(sfConvexShape *shape);
 
-#endif // ENGINE_RENDER_COMPONENT_H
+#endif // _ENGINE_RENDER_COMPONENT_H

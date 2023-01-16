@@ -25,15 +25,12 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/src/radar/entities/storm.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/hitbox.c
     ${PROJECT_SOURCE_DIR}/src/radar/entities/timer.c
-    ${PROJECT_SOURCE_DIR}/src/radar/components/position.c
-    ${PROJECT_SOURCE_DIR}/src/radar/components/speed.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/ui_link.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/hitbox.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/ttl.c
     ${PROJECT_SOURCE_DIR}/src/radar/components/music.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/simulation.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/timer.c
-    ${PROJECT_SOURCE_DIR}/src/radar/systems/movement.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/hitbox.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/rect.c
     ${PROJECT_SOURCE_DIR}/src/radar/systems/hitbox/circle.c
@@ -45,6 +42,8 @@ add_executable(${BINARY_NAME} ${EXECUTABLE_TYPE}
     ${PROJECT_SOURCE_DIR}/lib/engine/src/render/component.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/render/destroy.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/render/system.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/physics/component.c
+    ${PROJECT_SOURCE_DIR}/lib/engine/src/physics/system.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/events/handler.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/events/keys.c
     ${PROJECT_SOURCE_DIR}/lib/engine/src/events/mouse.c

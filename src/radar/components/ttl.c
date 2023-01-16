@@ -14,4 +14,3 @@ component_t *ttl_component_create(float remaining_time)
     *ttl = remaining_time;
     return component_create(TTL_COMPONENT_TYPE, ttl, ttl_component_destroy);
 }
-

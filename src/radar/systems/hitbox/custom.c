@@ -1,7 +1,8 @@
 #include <engine/tools/maths.h>
+#include <engine/physics/component.h>
+
 #include <radar/systems/hitbox.h>
 #include <radar/components/hitbox.h>
-#include <radar/components/position.h>
 
 static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b1, sfVector2f b2)
 {
@@ -36,8 +37,8 @@ static bool segment_intersect_segment(sfVector2f a1, sfVector2f a2, sfVector2f b
 
 bool custom_intersect_custom(entity_t *a, entity_t *b)
 {
-    sfVector2f pos_a = entity_get_component_data(a, POSITION_COMPONENT_TYPE, position_component_t)->position;
-    sfVector2f pos_b = entity_get_component_data(b, POSITION_COMPONENT_TYPE, position_component_t)->position;
+    sfVector2f pos_a = entity_get_component_data(a, PHYSICS_COMPONENT_TYPE, physics_component_t)->position;
+    sfVector2f pos_b = entity_get_component_data(b, PHYSICS_COMPONENT_TYPE, physics_component_t)->position;
 
     hitbox_component_t *a_h = entity_get_component_data(a, HITBOX_COMPONENT_TYPE, hitbox_component_t);
     hitbox_component_t *b_h = entity_get_component_data(b, HITBOX_COMPONENT_TYPE, hitbox_component_t);

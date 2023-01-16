@@ -3,10 +3,12 @@
 #include "engine.h"
 #include "ecs/scene.h"
 #include "render/system.h"
+#include "physics/system.h"
 
 static void scene_insert_default_systems(scene_t *scene)
 {
     scene_append_system(scene, render_system_create());
+    scene_append_system(scene, physics_system_create());
 }
 
 scene_t *scene_create(void)

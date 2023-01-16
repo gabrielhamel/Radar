@@ -1,5 +1,5 @@
-#ifndef ENGINE_RENDER_SYSTEM_H
-#define ENGINE_RENDER_SYSTEM_H
+#ifndef _ENGINE_RENDER_SYSTEM_H
+#define _ENGINE_RENDER_SYSTEM_H
 
 #include <limits.h>
 
@@ -9,4 +9,4 @@
 
 system_t *render_system_create(void);
 
-#endif // ENGINE_RENDER_SYSTEM_H
+#endif // _ENGINE_RENDER_SYSTEM_H

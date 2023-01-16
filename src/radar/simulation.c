@@ -7,7 +7,6 @@
 #include "radar/parser.h"
 #include "radar/entities/tower.h"
 #include "radar/systems/simulation.h"
-#include "radar/systems/movement.h"
 #include "radar/systems/hitbox.h"
 #include "radar/components/ui_link.h"
 #include "radar/systems/timer.h"
@@ -70,8 +69,6 @@ bool radar_init_from_script(scene_t *scene, const char *filepath)
     scene_append_system(scene, hitbox_system);
 
     simulation_load_background(scene);
-
-    scene_append_system(scene, movement_system_create());
 
     system_t *timer_system = timer_system_create();
     scene_append_system(scene, timer_system);
