@@ -6,9 +6,16 @@ set(BINARY_NAME radar)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # Maybe work on MacM1 only
-    # TODO Intel Mac
-    include_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/2.5.1/include)
-    link_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/2.5.1/lib)
+
+    execute_process (
+        COMMAND bash -c "brew info --json csfml | grep '\"version\": ' | head -n 1 | cut -f4 -d '\"' | tr -d '\n'"
+        OUTPUT_VARIABLE CSFML_BREW_VERSION
+    )
+
+	message(oui${CSFML_BREW_VERSION}non)
+
+    include_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/${CSFML_BREW_VERSION}/include)
+    link_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/${CSFML_BREW_VERSION}/lib)
 endif()
 
 if (${WIN32})
