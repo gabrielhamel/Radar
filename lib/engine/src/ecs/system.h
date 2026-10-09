@@ -1,7 +1,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 #include "../queue.h"
 #include "entity.h"

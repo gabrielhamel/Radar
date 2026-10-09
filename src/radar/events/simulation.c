@@ -1,4 +1,4 @@
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 #include <engine/ecs/scene.h>
 #include <engine/render/component.h>

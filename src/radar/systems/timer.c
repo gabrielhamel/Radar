@@ -9,7 +9,7 @@ static void update_timer(entity_t *entity, unsigned int hours, unsigned int minu
 {
     ui_element_t *timer = entity_get_component_data(entity, UI_LINK_COMPONENT_TYPE, ui_element_t);
 
-    sfUint32 text[] = {
+    uint32_t text[] = {
             '0' + hours / 10,
             '0' + hours % 10,
             ':',

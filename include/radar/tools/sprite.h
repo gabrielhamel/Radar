@@ -1,7 +1,7 @@
 #ifndef RADAR_TOOLS_SPRITE_H
 #define RADAR_TOOLS_SPRITE_H
 
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 typedef enum {
     TOP_LEFT,

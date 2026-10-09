@@ -1,4 +1,4 @@
-#include <SFML/Audio.h>
+#include <CSFML/Audio.h>
 
 #include <engine/render/component.h>
 #include <engine/render/system.h>

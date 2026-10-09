@@ -1,7 +1,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 #include "../queue.h"
 

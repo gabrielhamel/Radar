@@ -8,24 +8,29 @@ ui_element_t *ui_element_create(sfIntRect renderRectangle)
     ui_element_t *elem = malloc(sizeof(ui_element_t));
 
     TAILQ_INIT(&elem->children);
-    elem->render_target = sfRenderTexture_create(renderRectangle.width, renderRectangle.height, sfFalse);
+    elem->render_target = sfRenderTexture_create(
+        (sfVector2u){
+            renderRectangle.size.x,
+            renderRectangle.size.y
+        },
+        NULL
+    );
     elem->render_texture = (sfTexture *)sfRenderTexture_getTexture(elem->render_target);
-    elem->render_sprite = sfSprite_create();
+    elem->render_sprite = sfSprite_create(elem->render_texture);
     elem->background = sfRectangleShape_create();
     elem->hover_event = NULL;
     elem->is_hovered = false;
     elem->click_event = NULL;
-    elem->font = NULL;
+    elem->font = sfFont_createFromFile("assets/fonts/Hack-Regular.ttf");
     elem->text_ready = false;
-    elem->text = sfText_create();
+    elem->text = sfText_create(elem->font);
     sfText_setFillColor(elem->text, sfBlack);
     elem->is_clicked = false;
     elem->absolute_bounds = renderRectangle;
     sfRectangleShape_setPosition(elem->background, (sfVector2f){0, 0});
-    sfRectangleShape_setSize(elem->background, (sfVector2f){renderRectangle.width, renderRectangle.height});
+    sfRectangleShape_setSize(elem->background, (sfVector2f){renderRectangle.size.x, renderRectangle.size.y});
     sfRectangleShape_setFillColor(elem->background, sfTransparent);
-    sfSprite_setTexture(elem->render_sprite, elem->render_texture, sfTrue);
-    sfSprite_setPosition(elem->render_sprite, (sfVector2f){renderRectangle.left, renderRectangle.top});
+    sfSprite_setPosition(elem->render_sprite, (sfVector2f){renderRectangle.position.x, renderRectangle.position.y});
     return elem;
 }
 
@@ -43,9 +48,7 @@ void ui_element_destroy(ui_element_t *element)
     ui_state_event_destroy(element->hover_event);
     ui_state_event_destroy(element->click_event);
     sfText_destroy(element->text);
-    if (element->font) {
-        sfFont_destroy(element->font);
-    }
+    sfFont_destroy(element->font);
     free(element);
 }
 
@@ -54,8 +57,8 @@ void ui_element_append_children(ui_element_t *parent, ui_element_t *child)
     sfIntRect parent_bounds = parent->absolute_bounds;
     sfVector2f child_pos = sfSprite_getPosition(child->render_sprite);
 
-    child->absolute_bounds = (sfIntRect){ parent_bounds.left + child_pos.x, parent_bounds.top + child_pos.y,
-                                          child->absolute_bounds.width, child->absolute_bounds.height };
+    child->absolute_bounds = (sfIntRect){ parent_bounds.position.x + child_pos.x, parent_bounds.position.y + child_pos.y,
+                                          child->absolute_bounds.size.x, child->absolute_bounds.size.y };
     TAILQ_INSERT_HEAD(&parent->children, child, entry);
 }
 
@@ -95,7 +98,10 @@ void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
     struct ui_element_s *it = NULL;
     sfVector2i mouse_pos = sfMouse_getPositionRenderWindow(engine_get()->window);
     sfIntRect bounds = element->absolute_bounds;
-    bool mouse_collision = sfIntRect_contains(&bounds, mouse_pos.x, mouse_pos.y);
+    bool mouse_collision = sfIntRect_contains(
+        &bounds,
+        (sfVector2i){mouse_pos.x, mouse_pos.y}
+    );
     bool mouse_click = sfMouse_isButtonPressed(sfMouseLeft);
 
     if (!element->is_hovered && element->hover_event && mouse_collision) {
@@ -125,7 +131,7 @@ void ui_element_update(ui_element_t *element, sfTime *elapsed_time)
     }
 }
 
-void ui_element_set_text(ui_element_t *element, const sfUint32 *string)
+void ui_element_set_text(ui_element_t *element, const uint32_t *string)
 {
     sfFloatRect text_box;
     unsigned int offset = 0;
@@ -133,17 +139,11 @@ void ui_element_set_text(ui_element_t *element, const sfUint32 *string)
     element->text_ready = true;
     sfText_setUnicodeString(element->text, string);
     do {
-        sfText_setCharacterSize(element->text, element->absolute_bounds.height + offset);
+        sfText_setCharacterSize(element->text, element->absolute_bounds.size.y + offset);
         text_box = sfText_getLocalBounds(element->text);
-        sfText_setPosition(element->text, (sfVector2f){-text_box.left, -text_box.top});
+        sfText_setPosition(element->text, (sfVector2f){-text_box.position.x, -text_box.position.y});
         offset++;
-    } while (text_box.height < element->absolute_bounds.height);
-    float horizontalFactor = (float)element->absolute_bounds.width / text_box.width;
+    } while (text_box.size.y < element->absolute_bounds.size.y);
+    float horizontalFactor = (float)element->absolute_bounds.size.x / text_box.size.x;
     sfText_setScale(element->text, (sfVector2f){horizontalFactor, 1.f });
-}
-
-void ui_element_set_font(ui_element_t *element, const char *filepath)
-{
-    element->font = sfFont_createFromFile(filepath);
-    sfText_setFont(element->text, element->font);
 }

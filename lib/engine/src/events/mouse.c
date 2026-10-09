@@ -31,8 +31,8 @@ void eh_exec_mouse_pressed(events_handler_t *handler, sfEvent *event)
     TAILQ_FOREACH(it, &handler->mouse_pressed_binds, entry) {
         if (event->mouseButton.button == it->button) {
             it->callback((sfVector2i){
-                event->mouseButton.x,
-                event->mouseButton.y
+                event->mouseButton.position.x,
+                event->mouseButton.position.y
             }, it->context);
         }
     }
@@ -44,8 +44,8 @@ void eh_exec_mouse_released(events_handler_t *handler, sfEvent *event)
     TAILQ_FOREACH(it, &handler->mouse_released_binds, entry) {
         if (event->mouseButton.button == it->button) {
             it->callback((sfVector2i){
-                event->mouseButton.x,
-                event->mouseButton.y
+                event->mouseButton.position.x,
+                event->mouseButton.position.y
             }, it->context);
         }
     }

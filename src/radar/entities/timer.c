@@ -11,9 +11,8 @@ entity_t *ui_timer_create(void)
         120,
         30
     });
-    ui_element_set_font(timer, "assets/fonts/Hack-Regular.ttf");
 
-    sfUint32 text[9] = {0};
+    uint32_t text[9] = {0};
     string_to_utf8(text, "00:00:00", 9);
     ui_element_set_text(timer, text);
 

@@ -1,4 +1,4 @@
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 void sprite_destroy(sfSprite *sprite)
 {

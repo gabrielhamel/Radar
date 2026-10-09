@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 #include <stdbool.h>
 
 #include "ecs/scene.h"
@@ -10,7 +10,7 @@
 typedef struct {
     unsigned int width;
     unsigned int height;
-    sfUint32 *title;
+    uint32_t *title;
     const char *app_icon;
 } engine_params_t;
 

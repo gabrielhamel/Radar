@@ -7,7 +7,7 @@
 typedef struct {
     unsigned int width;
     unsigned int height;
-    sfUint32 *title;
+    uint32_t *title;
     const char *app_icon;
 } engine_params_t;
 

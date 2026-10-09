@@ -20,26 +20,32 @@ sfRenderWindow *engine_get_window(engine_t *engine)
 
 static sfRenderWindow *engine_window_create(engine_params_t params)
 {
-    sfVideoMode mode = {params.width, params.height, 32};
+    sfVideoMode mode = {{params.width, params.height}, 32};
     sfRenderWindow *window = NULL;
 
-    if (sfVideoMode_isValid(mode) == sfFalse) {
+    if (sfVideoMode_isValid(mode) == false) {
         perror("Video mode not supported");
 #ifndef CSFML_SYSTEM_MACOS
         return NULL;
 #endif
     }
     sfContextSettings settings = {
-        .antialiasingLevel = 16,
+        .antiAliasingLevel = 16,
     };
-    window = sfRenderWindow_createUnicode(mode, params.title, sfTitlebar | sfClose, &settings);
+    window = sfRenderWindow_createUnicode(
+        mode,
+        params.title,
+        sfTitlebar | sfClose,
+        sfWindowed,
+        &settings
+    );
     if (window == NULL) {
         perror("Cannot open the required window");
         return NULL;
     }
     sfRenderWindow_setFramerateLimit(window, 60);
-    sfRenderWindow_setVerticalSyncEnabled(window, sfTrue);
-    sfRenderWindow_setKeyRepeatEnabled(window, sfFalse);
+    sfRenderWindow_setVerticalSyncEnabled(window, true);
+    sfRenderWindow_setKeyRepeatEnabled(window, false);
     return window;
 }
 
@@ -47,7 +53,11 @@ bool engine_init(engine_t *engine, engine_params_t params)
 {
     sfImage *app_icon = sfImage_createFromFile(params.app_icon);
     engine->window = engine_window_create(params);
-    sfRenderWindow_setIcon(engine->window, 256, 256, sfImage_getPixelsPtr(app_icon));
+    sfRenderWindow_setIcon(
+        engine->window,
+        (sfVector2u){256, 256},
+        sfImage_getPixelsPtr(app_icon)
+    );
     sfImage_destroy(app_icon);
     engine->event = (sfEvent){0};
     engine->clock = sfClock_create();

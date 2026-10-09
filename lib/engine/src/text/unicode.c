@@ -2,7 +2,7 @@
 
 #include "unicode.h"
 
-void string_to_utf8(sfUint32 *buff, const char *str, size_t max_len)
+void string_to_utf8(uint32_t *buff, const char *str, size_t max_len)
 {
     size_t len = strlen(str);
 

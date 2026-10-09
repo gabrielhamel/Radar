@@ -23,17 +23,17 @@ bool rect_intersect_circle(entity_t *rect, entity_t *circle)
     sfVector2f aircraft_pos = entity_get_component_data(rect, PHYSICS_COMPONENT_TYPE, physics_component_t)->position;
     sfFloatRect aircraft_rect = (sfFloatRect){aircraft_pos.x, aircraft_pos.y, 20, 20};
 
-    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.left, aircraft_rect.top})) {
+    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.position.x, aircraft_rect.position.y})) {
         return true;
     }
-    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.left + aircraft_rect.width, aircraft_rect.top})) {
+    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.position.x + aircraft_rect.size.x, aircraft_rect.position.y})) {
         return true;
     }
-    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.left, aircraft_rect.top + aircraft_rect.height})) {
+    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.position.x, aircraft_rect.position.y + aircraft_rect.size.y})) {
         return true;
     }
-    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.left + aircraft_rect.width,
-                                                          aircraft_rect.top + aircraft_rect.height})) {
+    if (point_intersect_circle(circle, (sfVector2f){aircraft_rect.position.x + aircraft_rect.size.x,
+                                                          aircraft_rect.position.y + aircraft_rect.size.y})) {
         return true;
     }
     return false;

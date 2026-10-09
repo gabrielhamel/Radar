@@ -8,14 +8,12 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # Maybe work on MacM1 only
 
     execute_process (
-        COMMAND bash -c "brew info --json csfml | grep '\"version\": ' | head -n 1 | cut -f4 -d '\"' | tr -d '\n'"
-        OUTPUT_VARIABLE CSFML_BREW_VERSION
+        COMMAND bash -c "brew --prefix csfml | tr -d '\n'"
+        OUTPUT_VARIABLE CSFML_BREW_PREFIX
     )
 
-	message(oui${CSFML_BREW_VERSION}non)
-
-    include_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/${CSFML_BREW_VERSION}/include)
-    link_directories(${BINARY_NAME} /opt/homebrew/Cellar/csfml/${CSFML_BREW_VERSION}/lib)
+    include_directories(${BINARY_NAME} ${CSFML_BREW_PREFIX}/include)
+    link_directories(${BINARY_NAME} ${CSFML_BREW_PREFIX}/lib)
 endif()
 
 if (${WIN32})

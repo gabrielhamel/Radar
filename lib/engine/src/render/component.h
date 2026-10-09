@@ -3,7 +3,7 @@
 
 #include <limits.h>
 #include <stdbool.h>
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 #include "../ecs/component.h"
 #include "../queue.h"

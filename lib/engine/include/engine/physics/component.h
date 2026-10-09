@@ -2,7 +2,7 @@
 #define ENGINE_PHYSICS_COMPONENT_H
 
 #include <limits.h>
-#include <SFML/System.h>
+#include <CSFML/System.h>
 
 #include "../ecs/component.h"
 

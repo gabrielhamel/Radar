@@ -3,7 +3,7 @@
 
 #include <limits.h>
 #include <stdbool.h>
-#include <SFML/System/Vector2.h>
+#include <CSFML/System/Vector2.h>
 #include <engine/ecs/component.h>
 
 #define RENDER_COMPONENT_TYPE INT_MAX

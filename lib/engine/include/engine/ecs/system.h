@@ -1,7 +1,7 @@
 #ifndef ENGINE_ECS_SYSTEM_H
 #define ENGINE_ECS_SYSTEM_H
 
-#include <SFML/Graphics.h>
+#include <CSFML/Graphics.h>
 
 #include "entity.h"
 

@@ -1,7 +1,7 @@
 #ifndef ENGINE_EVENTS_EVENTS_H
 #define ENGINE_EVENTS_EVENTS_H
 
-#include <SFML/Window/Event.h>
+#include <CSFML/Window/Event.h>
 
 typedef struct events_handler_t events_handler_t;
 

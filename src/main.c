@@ -10,7 +10,7 @@ int main(void)
     engine_t *engine = engine_get();
     scene_t *scene = NULL;
 
-    sfUint32 title[6] = {0};
+    uint32_t title[6] = {0};
     string_to_utf8(title, "Radar", 6);
     if (engine_init(engine, (engine_params_t){
         .title = title,

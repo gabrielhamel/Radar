@@ -42,8 +42,8 @@ sfConvexShape *render_custom_create(sfVector2f initial_pos, sfVector2f *points, 
         sfConvexShape_setPoint(shape, idx, points[idx]);
     }
     sfTexture *texture = sfTexture_createFromFile("assets/storm.png", NULL);
-    sfTexture_setRepeated(texture, sfTrue);
-    sfConvexShape_setTexture(shape, texture, sfTrue);
+    sfTexture_setRepeated(texture, true);
+    sfConvexShape_setTexture(shape, texture, true);
     sfConvexShape_setTextureRect(shape, (sfIntRect){0, 0, 4800, 3200});
     sfConvexShape_setPosition(shape, initial_pos);
     sfConvexShape_setOutlineColor(shape, sfRed);
