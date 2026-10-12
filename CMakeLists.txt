@@ -5,8 +5,6 @@ set(CMAKE_C_STANDARD 23)
 set(BINARY_NAME radar)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # Maybe work on MacM1 only
-
     execute_process (
         COMMAND bash -c "brew --prefix csfml | tr -d '\n'"
         OUTPUT_VARIABLE CSFML_BREW_PREFIX
